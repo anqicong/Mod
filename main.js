@@ -125,25 +125,26 @@ var main = function(ex) {
 		question.init = function(){
 			switch (question.questionNum){
 				case 0: // both numbers are positive
-					question.y = getRandomInt(1, 10);
-					question.x = getRandomInt(question.y, 11);
+					question.y = getRandomInt(1, 8);
+					question.x = getRandomInt(question.y + 1, 10);
 					break;
 				case 1: // one number is positive and one is negative
 					// randomly pick either x or y to be negative
-					var xIsNegative = getRandomInt(0, 2);
-					if (xIsNegative){
-						question.x = getRandomInt(-10, 0);
+					var xIsNegative = Math.random();
+					if (xIsNegative < .5){
+						question.x = 0 - getRandomInt(1, 10);
 						question.y = getRandomInt(1, 10);
 					}
 					else{
-						question.x = getRandomInt(1, 11);
-						question.y = getRandomInt(-10, 0);
+						question.x = getRandomInt(1, 10);
+						question.y = 0 - getRandomInt(1, 10);
 					}
 					break;
 				default:
 					break;
 			}
 			question.numberLine = NumberLine();
+			question.numberLine.init();
 			question.numberLine.setX(question.x);
 			question.numberLine.setY(question.y);
 			question.numberLine.setCurPoint(question.x);
