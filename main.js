@@ -20,18 +20,30 @@ var main = function(ex) {
 
 	function Flow(){
 		var flow = {};
-		flow.maxNumQuestions = 2;
+		flow.numQuestions = 2;
 		flow.currQuestionNum = 0;
+		flow.questions = [];
 
 		flow.init = function(){
 			flow.numberLine = NumberLine();
-			flow.questions = [];
+			flow.numberLine.init();
+			// create and init questions
+			for (var i = 0; i < flow.numQuestions; i++){
+				flow.questions.push(Question(i));
+				flow.questions[i].init();
+			}
+			// draw!
 			flow.draw();
 		};
 
 		flow.draw = function(){
-			console.log("Hey");
+			// draw current question
+			flow.getCurrentQuestion().draw();
 		};
+
+		flow.getCurrentQuestion = function(){
+			return flow.questions[flow.currQuestionNum];
+		}
 
 		return flow;
 	}
@@ -101,16 +113,16 @@ var main = function(ex) {
         return numberLine;
     }
 
-	function Question(){
+	function Question(questionNum){
 		var question = {};
-
+		question.questionNum = questionNum;
 
 		question.init = function(){
 
 		};
 
 		question.draw = function(){
-
+			console.log(question.questionNum);
 		};
 
 		return question;
