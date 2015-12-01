@@ -120,6 +120,7 @@ var main = function(ex) {
 		question.questionNum = questionNum;
 		question.x = undefined;
 		question.y = undefined;
+		question.numberLine = undefined;
 
 		question.init = function(){
 			switch (question.questionNum){
@@ -142,6 +143,12 @@ var main = function(ex) {
 				default:
 					break;
 			}
+			question.numberLine = NumberLine();
+			question.numberLine.setX(question.x);
+			question.numberLine.setY(question.y);
+			question.numberLine.setCurPoint(question.x);
+			// init subquestions
+			// todo
 		};
 
 		question.draw = function(){
