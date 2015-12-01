@@ -38,7 +38,6 @@ var main = function(ex) {
 
 		flow.draw = function(){
 			// draw current question
-			flow.numberLine.draw();
 			flow.getCurrentQuestion().draw();
 		};
 
