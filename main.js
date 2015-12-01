@@ -18,6 +18,10 @@ var main = function(ex) {
         }
 	};
 
+	function getRandomInt(min, max) {
+	    return Math.floor(Math.random() * (max - min + 1)) + min;
+	}
+
 	function Flow(){
 		var flow = {};
 		flow.numQuestions = 2;
@@ -25,8 +29,6 @@ var main = function(ex) {
 		flow.questions = [];
 
 		flow.init = function(){
-			flow.numberLine = NumberLine();
-			flow.numberLine.init();
 			// create and init questions
 			for (var i = 0; i < flow.numQuestions; i++){
 				flow.questions.push(Question(i));
@@ -116,9 +118,30 @@ var main = function(ex) {
 	function Question(questionNum){
 		var question = {};
 		question.questionNum = questionNum;
+		question.x = undefined;
+		question.y = undefined;
 
 		question.init = function(){
-
+			switch (question.questionNum){
+				case 0: // both numbers are positive
+					question.y = getRandomInt(1, 10);
+					question.x = getRandomInt(question.y, 11);
+					break;
+				case 1: // one number is positive and one is negative
+					// randomly pick either x or y to be negative
+					var xIsNegative = getRandomInt(0, 2);
+					if (xIsNegative){
+						question.x = getRandomInt(-10, 0);
+						question.y = getRandomInt(1, 10);
+					}
+					else{
+						question.x = getRandomInt(1, 11);
+						question.y = getRandomInt(-10, 0);
+					}
+					break;
+				default:
+					break;
+			}
 		};
 
 		question.draw = function(){
