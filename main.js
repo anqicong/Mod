@@ -17,47 +17,70 @@ var main = function(ex) {
 		return flow;
 	}
 
-	function NumberLine(){
-		var numberLine = {};
-		numberLine.x = undefined;
-		numberLine.y = undefined;
-		numberLine.curPoint = undefined;
-		numberLine.showTargetRange = false;
+	    function NumberLine(){
+        var numberLine = {};
+        numberLine.x = undefined;
+        numberLine.y = undefined;
+        numberLine.curPoint = undefined;
+        numberLine.showTargetRange = false;
 
-		var numberLine.init(){
+        var numberLine.init(){
 
-		};
+        };
 
-		var numberLine.draw(){
-			// draw base line
+        var numberLine.draw(){
+            var l = {x1 : 200, y1 : 300, x2 : ex.width() - 200, y2 : 300};
 
-			// draw points
+            function drawLine() { 
+                ex.graphics.ctx.moveTo(l.x1, l.y1);
+                ex.graphics.ctx.lineTo(l.x2, l.y2);
+                ex.graphics.ctx.stroke();
+            }
 
-			// draw arrows
-		};
+            function drawPoints() {
+                
+            }
 
-		var numberLine.setX(x){
-			numberLine.x = x;
-		};
+            function drawArrows() {
+                var size = 20;
+                var a = {x1 : l.x1, y1 : l.y1, x2 : l.x1 + size, y2 : l.y1 - size};
 
-		var numberLine.setY(y){
-			numberLine.y = y;
-		};
+                for (var i = 0; i < 4; i++) {                
+                    ex.graphics.ctx.moveTo(a.x1, a.y1);
+                    ex.graphics.ctx.lineTo(a.x2, a.y2);
+                    ex.graphics.ctx.stroke();
+                    if (i % 2 == 1) a.y1 -= size * 2;
+                    else a.y1 += size * 2;
+                    if (i == 1) {
+                        a.x1 = l.x2;
+                        a.x2 = a.x1 - size;
+                    }
+                }
+            }
+        };
 
-		var numberLine.setCurPoint(newCurPoint){
-			numberLine.curPoint = newCurPoint;
-		};
+        var numberLine.setX(x){
+            numberLine.x = x;
+        };
 
-		var numberLine.drawArrow(from, to){
-			//todo
-		};
+        var numberLine.setY(y){
+            numberLine.y = y;
+        };
 
-		var numberLine.setTargetRange(on){
-			numberLine.showTargetRange = on;
-		};
+        var numberLine.setCurPoint(newCurPoint){
+            numberLine.curPoint = newCurPoint;
+        };
 
-		return numberLine;
-	}
+        var numberLine.drawArrow(from, to){
+            //todo
+        };
+
+        var numberLine.setTargetRange(on){
+            numberLine.showTargetRange = on;
+        };
+
+        return numberLine;
+    }
 
 	function Question(){
 		var question = {};
