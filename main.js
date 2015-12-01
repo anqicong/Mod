@@ -3,32 +3,34 @@ var main = function(ex) {
 
 	function Flow(){
 		var flow = {};
+		flow.maxNumQuestions = 2;
+		flow.currQuestionNum = 0;
 
-		var flow.init(){
+		flow.init = function(){
 			flow.numberLine = NumberLine();
 			flow.questions = [];
-			// initialize all the questions and draw them
+			
 		};
 
-		var flow.draw(){
+		flow.draw = function(){
 
 		};
 
 		return flow;
 	}
 
-	    function NumberLine(){
+	function NumberLine(){
         var numberLine = {};
         numberLine.x = undefined;
         numberLine.y = undefined;
         numberLine.curPoint = undefined;
         numberLine.showTargetRange = false;
 
-        var numberLine.init(){
+        numberLine.init = function(){
 
         };
 
-        var numberLine.draw(){
+        numberLine.draw = function(){
             var l = {x1 : 200, y1 : 300, x2 : ex.width() - 200, y2 : 300};
 
             function drawLine() { 
@@ -59,23 +61,23 @@ var main = function(ex) {
             }
         };
 
-        var numberLine.setX(x){
+        numberLine.setX = function(x){
             numberLine.x = x;
         };
 
-        var numberLine.setY(y){
+        numberLine.setY = function(y){
             numberLine.y = y;
         };
 
-        var numberLine.setCurPoint(newCurPoint){
+        numberLine.setCurPoint = function(newCurPoint){
             numberLine.curPoint = newCurPoint;
         };
 
-        var numberLine.drawArrow(from, to){
+        numberLine.drawArrow = function(from, to){
             //todo
         };
 
-        var numberLine.setTargetRange(on){
+        numberLine.setTargetRange = function(on){
             numberLine.showTargetRange = on;
         };
 
@@ -86,11 +88,11 @@ var main = function(ex) {
 		var question = {};
 
 
-		var question.init(){
+		question.init = function(){
 
 		};
 
-		var question.draw(){
+		question.draw = function(){
 
 		};
 
@@ -99,8 +101,8 @@ var main = function(ex) {
 
 	function SubQuestion(){
 		var subQuestion = {};
-		return subQuestion'
-	}
+		return subQuestion
+	};
 
 	flow = Flow();
 	flow.init();
