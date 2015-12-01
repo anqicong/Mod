@@ -1,6 +1,23 @@
 
 var main = function(ex) {
 
+	ex.data.meta = {
+		"author": "Team 6",
+        "email": "acong@andrew.cmu.edu",
+        "title": "Mod",
+        "description": "Mod",
+        "id": "acong",
+        "language": "",
+        "difficulty": "medium",
+        "mainFile": "main.js",
+        "instrFile": "instr.html",
+        "constructorName": "main",
+        "menuDisplayName": "Mod",
+        "mode": "practice",
+        "requires": {
+        }
+	};
+
 	function Flow(){
 		var flow = {};
 		flow.maxNumQuestions = 2;
@@ -9,11 +26,11 @@ var main = function(ex) {
 		flow.init = function(){
 			flow.numberLine = NumberLine();
 			flow.questions = [];
-			
+			flow.draw();
 		};
 
 		flow.draw = function(){
-
+			console.log("Hey");
 		};
 
 		return flow;
@@ -101,11 +118,10 @@ var main = function(ex) {
 
 	function SubQuestion(){
 		var subQuestion = {};
-		return subQuestion
-	};
+		return subQuestion;
+	}
 
 	flow = Flow();
 	flow.init();
-	flow.draw();
 
 };
