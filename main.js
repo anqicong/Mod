@@ -127,6 +127,7 @@ var main = function(ex) {
 		question.y = undefined;
 		question.numberLine = undefined;
 		question.subquestions = [];
+		question.currSubquestion = 0;
 
 		question.init = function(){
 			switch (question.questionNum){
@@ -154,18 +155,23 @@ var main = function(ex) {
 			question.numberLine.setX(question.x);
 			question.numberLine.setY(question.y);
 			question.numberLine.setCurPoint(question.x);
-			// init subquestions
+			// create and init subquestions
+			// initial question
 			question.subquestions.push(SubQuestion("initial"));
+			question.subquestions[0].init();
+			// jump question
 			var jumpQuestion = SubQuestion("jump");
 			jumpQuestion.x = question.x;
 			jumpQuestion.y = question.y;
 			jumpQuestion.answer = question.x - question.y;
+			jumpQuestion.init();
 			question.subquestions.push(jumpQuestion);
-			// create reached question
+			// reached question
 			var reachedQuestion = SubQuestion("reached");
 			reachedQuestion.x = question.x;
 			reachedQuestion.y = question.y;
 			reachedQuestion.answer = true;
+			reachedQuestion.init();
 			question.subquestions.push(reachedQuestion);
 			console.log(question.x);
 			console.log(question.y);
@@ -173,7 +179,11 @@ var main = function(ex) {
 		};
 
 		question.draw = function(){
-			console.log(question.questionNum);
+			question.getCurrentSubquestion().draw();
+		};
+
+		question.getCurrentSubquestion = function(){
+			return question.subquestions[question.currSubquestion];
 		};
 
 		return question;
@@ -181,9 +191,42 @@ var main = function(ex) {
 
 	function SubQuestion(type){ // types can be: inital, jump, reached
 		var subquestion = {};
+		subquestion.type = type;
 		subquestion.x = undefined;
 		subquestion.y = undefined;
 		subquestion.answer = undefined;
+		subquestion.textLines = [];
+		subquestion.possibleAnswersDropDown = undefined;
+
+		subquestion.init = function(){
+			switch (subquestion.type){
+				case ("initial"):
+					subquestion.textLines.push("Let's calculate x % " + toString(subquestion.y));
+					subquestion.textLines.push("What are the possible answers?");
+					var dropdownX = 400;
+					var dropdownY = 300;
+					var foo = function(){alert("foo")};
+					var bar = function(){alert("bar")};
+					subquestion.possibleAnswersDropDown = ex.createDropdown(dropdownX, dropdownY,"Choose one",{
+													            color: "white",
+													            elements: {
+													                foo: foo,
+													                bar: bar
+													            }
+													        });
+					break;
+				case ("jump"):
+					break;
+				case ("reached"):
+					break;
+				default:
+					break;
+			}
+		};
+
+		subquestion.draw = function(){
+
+		};
 
 		return subquestion;
 	}
