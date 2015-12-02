@@ -121,6 +121,7 @@ var main = function(ex) {
 		question.x = undefined;
 		question.y = undefined;
 		question.numberLine = undefined;
+		question.subquestions = [];
 
 		question.init = function(){
 			switch (question.questionNum){
@@ -149,7 +150,21 @@ var main = function(ex) {
 			question.numberLine.setY(question.y);
 			question.numberLine.setCurPoint(question.x);
 			// init subquestions
-			// todo
+			question.subquestions.push(SubQuestion("initial"));
+			var jumpQuestion = SubQuestion("jump");
+			jumpQuestion.x = question.x;
+			jumpQuestion.y = question.y;
+			jumpQuestion.answer = question.x - question.y;
+			question.subquestions.push(jumpQuestion);
+			// create reached question
+			var reachedQuestion = SubQuestion("reached");
+			reachedQuestion.x = question.x;
+			reachedQuestion.y = question.y;
+			reachedQuestion.answer = true;
+			question.subquestions.push(reachedQuestion);
+			console.log(question.x);
+			console.log(question.y);
+			console.log(question.subquestions);
 		};
 
 		question.draw = function(){
@@ -159,9 +174,13 @@ var main = function(ex) {
 		return question;
 	}
 
-	function SubQuestion(){
-		var subQuestion = {};
-		return subQuestion;
+	function SubQuestion(type){ // types can be: inital, jump, reached
+		var subquestion = {};
+		subquestion.x = undefined;
+		subquestion.y = undefined;
+		subquestion.answer = undefined;
+
+		return subquestion;
 	}
 
 	flow = Flow();
