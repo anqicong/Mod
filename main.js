@@ -113,10 +113,20 @@ var main = function(ex) {
      * NumberLine
      ****************************************************************/
 
-    function check(){ return function() {} };
+    function check(i){ 
+        return function(){
+            if (i == numberLine.curPoint - numberLine.y) {
+                numberLine.curPoint = numberLine.curPoint - numberLine.y;
+                return true;
+            }
+            else return false;
+        } 
+    };
 
     function NumberLine(){
         var numberLine = {};
+        numberLine.x = undefined;
+        numberLine.y = undefined;
         numberLine.curPoint = undefined;
         numberLine.showTargetRange = false;
         numberLine.minNum = -10;
@@ -124,7 +134,7 @@ var main = function(ex) {
         numberLine.numButtonList = [];
 
         // l is number line, p is points on line, a is arrows at either end
-        var l = {x1 : 6, y1 : 75, x2 : ex.width() - 6, y2 : 75};
+        var l = {x1 : 6, y1 : 90, x2 : ex.width() - 6, y2 : 90};
         var offset = (l.x2 - l.x1) / 22;
         var p = {r : 5, x : l.x1 + offset, y : l.y1};
         p.offset = offset;
@@ -167,7 +177,7 @@ var main = function(ex) {
             function drawNumbers() {
                 for (var i = numberLine.minNum; i < numberLine.maxNum + 1; i++) {
                     numberLine.numButtonList.push(ex.createButton(
-                    p.x + p.offset * (i + numberLine.maxNum) - 16, p.y + 10, i.toString(), {
+                    p.x + p.offset * (i + numberLine.maxNum) - 14, p.y + 10, i.toString(), {
                     color: "blue", size: "small" }).on("click", check(i)))
                 }
             }
@@ -211,71 +221,71 @@ var main = function(ex) {
     a.draw();
 
     /*****************************************************************
-	 * Question
-	 ****************************************************************/
+     * Question
+     ****************************************************************/
 
-	function Question(questionNum){
-		var question = {};
-		question.questionNum = questionNum;
-		question.x = undefined;
-		question.y = undefined;
-		question.numberLine = undefined;
-		question.subquestions = [];
-		question.currSubquestion = 0;
+    function Question(questionNum){
+        var question = {};
+        question.questionNum = questionNum;
+        question.x = undefined;
+        question.y = undefined;
+        question.numberLine = undefined;
+        question.subquestions = [];
+        question.currSubquestion = 0;
 
-		question.init = function(){
-			// generate x and y
-			switch (question.questionNum){
-				case 0: // both numbers are positive
-					question.y = getRandomInt(1, 8);
-					question.x = getRandomInt(question.y + 1, 10);
-					break;
-				case 1: // one number is positive and one is negative
-					// randomly pick either x or y to be negative
-					var xIsNegative = Math.random();
-					if (xIsNegative < .5){
-						question.x = 0 - getRandomInt(1, 10);
-						question.y = getRandomInt(1, 10);
-					}
-					else{
-						question.x = getRandomInt(1, 10);
-						question.y = 0 - getRandomInt(1, 10);
-					}
-					break;
-				default:
-					break;
-			}
-			// create numberline
-			question.numberLine = NumberLine();
-			question.numberLine.setX(question.x);
-			question.numberLine.setY(question.y);
-			question.numberLine.setCurPoint(question.x);
+        question.init = function(){
+            // generate x and y
+            switch (question.questionNum){
+                case 0: // both numbers are positive
+                    question.y = getRandomInt(1, 8);
+                    question.x = getRandomInt(question.y + 1, 10);
+                    break;
+                case 1: // one number is positive and one is negative
+                    // randomly pick either x or y to be negative
+                    var xIsNegative = Math.random();
+                    if (xIsNegative < .5){
+                        question.x = 0 - getRandomInt(1, 10);
+                        question.y = getRandomInt(1, 10);
+                    }
+                    else{
+                        question.x = getRandomInt(1, 10);
+                        question.y = 0 - getRandomInt(1, 10);
+                    }
+                    break;
+                default:
+                    break;
+            }
+            // create numberline
+            question.numberLine = NumberLine();
+            question.numberLine.setX(question.x);
+            question.numberLine.setY(question.y);
+            question.numberLine.setCurPoint(question.x);
 
-			// create subquestions
-			// initial question
-			var initialQuestion = SubQuestion("initial");
-			initialQuestion.y = question.y;
-			question.subquestions.push(initialQuestion);
-			// jump question
-			var jumpQuestion = SubQuestion("jump");
-			jumpQuestion.x = question.x;
-			jumpQuestion.y = question.y;
-			jumpQuestion.answer = question.x - question.y;
-			question.subquestions.push(jumpQuestion);
-			// reached question
-			var reachedQuestion = SubQuestion("reached");
-			reachedQuestion.x = question.x;
-			reachedQuestion.y = question.y;
-			reachedQuestion.answer = true;
-			question.subquestions.push(reachedQuestion);
+            // create subquestions
+            // initial question
+            var initialQuestion = SubQuestion("initial");
+            initialQuestion.y = question.y;
+            question.subquestions.push(initialQuestion);
+            // jump question
+            var jumpQuestion = SubQuestion("jump");
+            jumpQuestion.x = question.x;
+            jumpQuestion.y = question.y;
+            jumpQuestion.answer = question.x - question.y;
+            question.subquestions.push(jumpQuestion);
+            // reached question
+            var reachedQuestion = SubQuestion("reached");
+            reachedQuestion.x = question.x;
+            reachedQuestion.y = question.y;
+            reachedQuestion.answer = true;
+            question.subquestions.push(reachedQuestion);
 
-			// init current question
-			question.getCurrentSubquestion().init();
+            // init current question
+            question.getCurrentSubquestion().init();
 
-			console.log(question.x);
-			console.log(question.y);
-			console.log(question.subquestions);
-		};
+            console.log(question.x);
+            console.log(question.y);
+            console.log(question.subquestions);
+        };
 
         question.draw = function(){
             question.getCurrentSubquestion().draw();
@@ -358,7 +368,7 @@ var main = function(ex) {
         };
 
         return subquestion;
-	}
+    }
 
 
     flow = Flow();
