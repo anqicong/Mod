@@ -261,7 +261,6 @@ var main = function(ex) {
 		question.currSubquestion = 0;
 
 		question.init = function(){
-			console.log("And so it begins");
 			// generate x and y
 			switch (question.questionNum){
 				case 0: // both numbers are positive
@@ -319,7 +318,6 @@ var main = function(ex) {
 			console.log(question.subquestions);
 
         question.nextButton = ex.createButton(ex.width()-75, ex.height()-50, "next", {color:"blue"}).on("click", function(){
-				console.log(question.subquestions);
 				var correct = question.getCurrentSubquestion().checkAnswer();
 				if(correct){
 					console.log("correct!");
@@ -361,6 +359,9 @@ var main = function(ex) {
         subquestion.selectedAnswer = "";
         subquestion.shuffledOptions = undefined;
 
+        subquestion.makeSelection = function(i){
+        	return function(){subquestion.selectedAnswer = subquestion.shuffledOptions[i]; };
+        };
         subquestion.init = function(){
             //subquestion.nextButton = ex.createButton(ex.width(), ex.height(), "next", function(){alert("stuff")});
             switch (subquestion.type){
@@ -385,9 +386,10 @@ var main = function(ex) {
                     }
                     subquestion.answer = options[0];
                     subquestion.shuffledOptions = shuffle(options); // shuffle the options
+                    console.log(subquestion.shuffledOptions);
                     var elements = {};
                     for (var i = 0; i < subquestion.shuffledOptions.length; i++){
-                    	elements[subquestion.shuffledOptions[i]] = undefined;
+                    	elements[subquestion.shuffledOptions[i]] = subquestion.makeSelection(i);
                     }
                     subquestion.possibleAnswersDropDown = ex.createDropdown(dropdownX, dropdownY,"Choose one",{
                                                                 color: "white",
@@ -423,6 +425,7 @@ var main = function(ex) {
                 default:
                     break;
             }
+
         };
 
         subquestion.draw = function(){
