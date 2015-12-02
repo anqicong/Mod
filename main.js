@@ -220,76 +220,90 @@ var main = function(ex) {
     a.draw();
 
     /*****************************************************************
-     * Question
-     ****************************************************************/
 
-    function Question(questionNum){
-        var question = {};
-        question.questionNum = questionNum;
-        question.x = undefined;
-        question.y = undefined;
-        question.numberLine = undefined;
-        question.subquestions = [];
-        question.currSubquestion = 0;
+	 * Question
+	 ****************************************************************/
 
-        question.init = function(){
-            // generate x and y
-            switch (question.questionNum){
-                case 0: // both numbers are positive
-                    question.y = getRandomInt(1, 8);
-                    question.x = getRandomInt(question.y + 1, 10);
-                    break;
-                case 1: // one number is positive and one is negative
-                    // randomly pick either x or y to be negative
-                    var xIsNegative = Math.random();
-                    if (xIsNegative < .5){
-                        question.x = 0 - getRandomInt(1, 10);
-                        question.y = getRandomInt(1, 10);
-                    }
-                    else{
-                        question.x = getRandomInt(1, 10);
-                        question.y = 0 - getRandomInt(1, 10);
-                    }
-                    break;
-                default:
-                    break;
-            }
-            // create numberline
-            question.numberLine = NumberLine();
-            question.numberLine.setX(question.x);
-            question.numberLine.setY(question.y);
-            question.numberLine.setCurPoint(question.x);
+	function Question(questionNum){
+		var question = {};
+		question.questionNum = questionNum;
+		question.x = undefined;
+		question.y = undefined;
+		question.numberLine = undefined;
+		question.subquestions = [];
+		question.currSubquestion = 0;
+		//next button
 
-            // create subquestions
-            // initial question
-            var initialQuestion = SubQuestion("initial");
-            initialQuestion.y = question.y;
-            question.subquestions.push(initialQuestion);
-            // jump question
-            var jumpQuestion = SubQuestion("jump");
-            jumpQuestion.x = question.x;
-            jumpQuestion.y = question.y;
-            jumpQuestion.answer = question.x - question.y;
-            question.subquestions.push(jumpQuestion);
-            // reached question
-            var reachedQuestion = SubQuestion("reached");
-            reachedQuestion.x = question.x;
-            reachedQuestion.y = question.y;
-            reachedQuestion.answer = true;
-            question.subquestions.push(reachedQuestion);
+		question.nextButton = ex.createButton(ex.width()-50, ex.height()-100, "next").on("click", function(){
+				alert("next!");
+				if(question.currSubquestion.correct){
+					ex.alert("correct!");
+					console.log("happens");
+					question.currSubquestion += 1;
+					question.getCurrentSubquestion().init();
+				} else {
+					ex.alert("incorrect!");
+				};
+			});
+		question.init = function(){
+			// generate x and y
+			switch (question.questionNum){
+				case 0: // both numbers are positive
+					question.y = getRandomInt(1, 8);
+					question.x = getRandomInt(question.y + 1, 10);
+					break;
+				case 1: // one number is positive and one is negative
+					// randomly pick either x or y to be negative
+					var xIsNegative = Math.random();
+					if (xIsNegative < .5){
+						question.x = 0 - getRandomInt(1, 10);
+						question.y = getRandomInt(1, 10);
+					}
+					else{
+						question.x = getRandomInt(1, 10);
+						question.y = 0 - getRandomInt(1, 10);
+					}
+					break;
+				default:
+					break;
+			}
+			// create numberline
+			question.numberLine = NumberLine();
+			question.numberLine.setX(question.x);
+			question.numberLine.setY(question.y);
+			question.numberLine.setCurPoint(question.x);
 
-            // init current question
-            question.getCurrentSubquestion().init();
+			// create subquestions
+			// initial question
+			var initialQuestion = SubQuestion("initial");
+			initialQuestion.y = question.y;
+			question.subquestions.push(initialQuestion);
+			// jump question
+			var jumpQuestion = SubQuestion("jump");
+			jumpQuestion.x = question.x;
+			jumpQuestion.y = question.y;
+			jumpQuestion.answer = question.x - question.y;
+			question.subquestions.push(jumpQuestion);
+			// reached question
+			var reachedQuestion = SubQuestion("reached");
+			reachedQuestion.x = question.x;
+			reachedQuestion.y = question.y;
+			reachedQuestion.answer = true;
+			question.subquestions.push(reachedQuestion);
 
-            console.log(question.x);
-            console.log(question.y);
-            console.log(question.subquestions);
-        };
+			// init current question
+			question.getCurrentSubquestion().init();
+			
 
-        question.draw = function(){
-            question.getCurrentSubquestion().draw();
-        };
+			console.log(question.x);
+			console.log(question.y);
+			console.log(question.subquestions);
+		};
 
+		question.draw = function(){
+			question.getCurrentSubquestion().draw();
+			question.numberLine.draw();
+		};
         question.getCurrentSubquestion = function(){
             return question.subquestions[question.currSubquestion];
         };
@@ -309,6 +323,7 @@ var main = function(ex) {
         subquestion.answer = undefined;
         subquestion.textLines = [];
         subquestion.possibleAnswersDropDown = undefined;
+        subquestion.selectedAnswer = undefined
 
         subquestion.init = function(){
             //subquestion.nextButton = ex.createButton(ex.width(), ex.height(), "next", function(){alert("stuff")});
@@ -335,21 +350,38 @@ var main = function(ex) {
                     var answer = options[0];
                     var shuffledOptions = shuffle(options); // shuffle the options
                     // because javascript is dumb
-                    var foo = function(){ alert("foo")};
-                    var bar = function(){ alert("bar")};
+
                     var elements = {};
+                    for (var i = 0; i < shuffledOptions.length; i++){
+                    	elements[shuffledOptions[i]] = undefined;
+                    }
+
+                    var foo = function(){ alert("foo"); subquestion.correct = true;};
+                    var bar = function(){ alert("bar"); subquestion.correct = false;};
+                    var elements = {};
+                    for (var i = 0; i < shuffledOptions.length; i++){
+						if (shuffledOptions[i] == answer){
+							elements[shuffledOptions[i]] = foo;
+						}
+						else{
+							elements[shuffledOptions[i]] = bar;
+						}
+					}/*
                     elements[shuffledOptions[0]] = foo;
                     elements[shuffledOptions[1]] = bar;
                     elements[shuffledOptions[2]] = bar;
-                    elements[shuffledOptions[3]] = bar;
+                    elements[shuffledOptions[3]] = bar;*/
+
                     subquestion.possibleAnswersDropDown = ex.createDropdown(dropdownX, dropdownY,"Choose one",{
                                                                 color: "white",
                                                                 elements: elements
                                                             });
                     break;
                 case ("jump"):
+                	console.log("jump");
                     break;
                 case ("reached"):
+                	console.log("reached");
                     break;
                 default:
                     break;
