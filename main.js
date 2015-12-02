@@ -21,6 +21,14 @@ var main = function(ex) {
      * Utility functions
      ****************************************************************/
 
+    function div(x, y){
+        return Math.floor(x / y);
+    }
+
+    function mod(x, y){
+        return x - div(x, y)*y;
+    }
+
     function getRandomInt(min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
@@ -31,6 +39,28 @@ var main = function(ex) {
             a.push(i);
         }
         return a;
+    }
+
+    // how many times do you have to subtract/add y from/to x?
+    // e.g. for 5 % 2, you need to do it twice
+    // works for negatives too
+    // this is because int division doesn't do the thing I want...
+    function getNumTimesToIterateSubquestion(x, y){
+        var count = 0;
+        if (x > 0 && y > 0){ // both are positive
+            count = Math.trunc((x - x%y)/y);
+        }
+        else{
+            x = Math.abs(x);
+            y = -Math.abs(y);
+            while (x > y){
+                count++;
+                x += y;
+            }
+            count--;
+        }
+        // shouldn't be a case when both are negative
+        return count;
     }
 
     function listToString2D(list) {
@@ -109,9 +139,6 @@ var main = function(ex) {
         return flow;
     }
 
-    flow = Flow();
-    flow.init();
-
     /*****************************************************************
      * NumberLine
      ****************************************************************/
@@ -137,12 +164,11 @@ var main = function(ex) {
 
         function check(i){ 
             return function(){
-                if (i == flow.curPoint - flow.y) {
-                    flow.curPoint = flow.curPoint - flow.y;
+                if (i == numberLine.curPoint - numberLine.y) {
+                    numberLine.curPoint = numberLine.curPoint - numberLine.y;
                     return true;
                 }
-                else return false;
-            }
+            } 
         };
 
         numberLine.draw = function(){
@@ -260,16 +286,14 @@ var main = function(ex) {
             question.numberLine.setX(question.x);
             question.numberLine.setY(question.y);
             question.numberLine.setCurPoint(question.x);
-            question.numberLine.draw();
-            flow.x = question.x;
-            flow.y = question.y;
-            flow.curPoint = question.x;
 
             // create subquestions
             // initial question
             var initialQuestion = SubQuestion("initial");
             initialQuestion.y = question.y;
             question.subquestions.push(initialQuestion);
+            // create jump and reached questions
+            var numJumpReachedQuestions = getNumTimesToIterateSubquestion(question.x, question.y);
             // jump question
             var jumpQuestion = SubQuestion("jump");
             jumpQuestion.x = question.x;
@@ -286,15 +310,32 @@ var main = function(ex) {
             // init current question
             question.getCurrentSubquestion().init();
 
+            
+
             console.log(question.x);
             console.log(question.y);
             console.log(question.subquestions);
+
+        question.nextButton = ex.createButton(ex.width()-75, ex.height()-50, "next", {color:"blue"}).on("click", function(){
+                var correct = question.getCurrentSubquestion().checkAnswer();
+                if(correct){
+                    console.log("correct!");
+                    question.currSubquestion += 1;
+                    question.getCurrentSubquestion().init();
+                    question.draw();
+                } else {
+                    console.log("incorrect");
+                };
+            });
         };
 
         question.draw = function(){
+            // draw the question number
+            ex.createParagraph(10, 10, "Question "+ (question.questionNum+1).toString(), {size:"xlarge"});
+            // draw its child things
             question.getCurrentSubquestion().draw();
+            question.numberLine.draw();
         };
-
         question.getCurrentSubquestion = function(){
             return question.subquestions[question.currSubquestion];
         };
@@ -314,7 +355,12 @@ var main = function(ex) {
         subquestion.answer = undefined;
         subquestion.textLines = [];
         subquestion.possibleAnswersDropDown = undefined;
+        subquestion.selectedAnswer = "";
+        subquestion.shuffledOptions = undefined;
 
+        subquestion.makeSelection = function(i){
+            return function(){subquestion.selectedAnswer = subquestion.shuffledOptions[i]; };
+        };
         subquestion.init = function(){
             //subquestion.nextButton = ex.createButton(ex.width(), ex.height(), "next", function(){alert("stuff")});
             switch (subquestion.type){
@@ -322,7 +368,7 @@ var main = function(ex) {
                     subquestion.textLines.push("Let's calculate x % " + subquestion.y.toString());
                     subquestion.textLines.push("What are the possible answers?");
                     var dropdownX = 440;
-                    var dropdownY = 285;
+                    var dropdownY = 240;
                     // create options for the dropdown as strings
                     var options = [];
                     if (subquestion.y > 0){
@@ -337,33 +383,53 @@ var main = function(ex) {
                         options.push(listToString1D(getRange(0, -subquestion.y)));
                         options.push(listToString1D(getRange(0, -subquestion.y + 1)));
                     }
-                    var answer = options[0];
-                    var shuffledOptions = shuffle(options); // shuffle the options
-                    // because javascript is dumb
-                    var foo = function(){ alert("foo")};
-                    var bar = function(){ alert("bar")};
+                    subquestion.answer = options[0];
+                    subquestion.shuffledOptions = shuffle(options); // shuffle the options
+                    console.log(subquestion.shuffledOptions);
                     var elements = {};
-                    elements[shuffledOptions[0]] = foo;
-                    elements[shuffledOptions[1]] = bar;
-                    elements[shuffledOptions[2]] = bar;
-                    elements[shuffledOptions[3]] = bar;
+                    for (var i = 0; i < subquestion.shuffledOptions.length; i++){
+                        elements[subquestion.shuffledOptions[i]] = subquestion.makeSelection(i);
+                    }
                     subquestion.possibleAnswersDropDown = ex.createDropdown(dropdownX, dropdownY,"Choose one",{
                                                                 color: "white",
                                                                 elements: elements
                                                             });
                     break;
                 case ("jump"):
+                    subquestion.textLines.push("Let's calculate x % " + subquestion.y.toString());
+                    subquestion.textLines.push("We calculate " + subquestion.x.toString() + " % " 
+                                                + subquestion.y.toString() + " by adding or subtracting "
+                                                + subquestion.y.toString());
+                    subquestion.textLines.push("        until we reach the target range.");
+                    subquestion.textLines.push("Click where we jump to next.");
                     break;
                 case ("reached"):
+                    subquestion.textLines.push("Let's calculate x % " + subquestion.y.toString());  
+                    subquestion.textLines.push("We calculate " + subquestion.x.toString() + " % " 
+                                                + subquestion.y.toString() + " by adding or subtracting "
+                                                + subquestion.y.toString());
+                    subquestion.textLines.push("        until we reach the target range.");
+                    subquestion.textLines.push("Click where we jump to next.");
+                    subquestion.textLines.push("");
+                    subquestion.textLines.push("Have we reached the answer?");
+                    // dropdown for reached
+                    var dropdownX = 440;
+                    var dropdownY = 280;
+                    subquestion.possibleAnswersDropDown = ex.createDropdown(dropdownX, dropdownY,"Choose one",{
+                                                                color: "white",
+                                                                elements: {yes: undefined,
+                                                                           no: undefined}
+                                                            });
                     break;
                 default:
                     break;
             }
+
         };
 
         subquestion.draw = function(){
             var textStartX = 30;
-            var textStartY = 250;
+            var textStartY = 205;
             var spacing = 35;
             for (var i = 0; i < subquestion.textLines.length; i++){
                 ex.createParagraph(textStartX, textStartY + i*spacing, subquestion.textLines[i],
@@ -371,7 +437,26 @@ var main = function(ex) {
             }
         };
 
+        subquestion.checkAnswer = function(){
+            switch (subquestion.type){
+                case "initial": 
+                    if (subquestion.answer === subquestion.selectedAnswer){
+                        alert("correct");
+                    } else {
+                        alert("incorrect!");
+                    }
+                    break;
+                default:
+                    return false;
+                    break;
+            }
+        }
+
         return subquestion;
     }
+
+
+    flow = Flow();
+    flow.init();
 
 };
