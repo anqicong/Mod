@@ -21,14 +21,6 @@ var main = function(ex) {
      * Utility functions
      ****************************************************************/
 
-    function div(x, y){
-    	return Math.floor(x / y);
-    }
-
-    function mod(x, y){
-    	return x - div(x, y)*y;
-    }
-
     function getRandomInt(min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
@@ -39,28 +31,6 @@ var main = function(ex) {
             a.push(i);
         }
         return a;
-    }
-
-    // how many times do you have to subtract/add y from/to x?
-    // e.g. for 5 % 2, you need to do it twice
-    // works for negatives too
-    // this is because int division doesn't do the thing I want...
-    function getNumTimesToIterateSubquestion(x, y){
-    	var count = 0;
-    	if (x > 0 && y > 0){ // both are positive
-    		count = Math.trunc((x - x%y)/y);
-    	}
-    	else{
-    		x = Math.abs(x);
-    		y = -Math.abs(y);
-    		while (x > y){
-    			count++;
-    			x += y;
-    		}
-    		count--;
-    	}
-    	// shouldn't be a case when both are negative
-    	return count;
     }
 
     function listToString2D(list) {
@@ -139,6 +109,9 @@ var main = function(ex) {
         return flow;
     }
 
+    flow = Flow();
+    flow.init();
+
     /*****************************************************************
      * NumberLine
      ****************************************************************/
@@ -164,11 +137,12 @@ var main = function(ex) {
 
         function check(i){ 
             return function(){
-                if (i == numberLine.curPoint - numberLine.y) {
-                    numberLine.curPoint = numberLine.curPoint - numberLine.y;
+                if (i == flow.curPoint - flow.y) {
+                    flow.curPoint = flow.curPoint - flow.y;
                     return true;
                 }
-            } 
+                else return false;
+            }
         };
 
         numberLine.draw = function(){
@@ -246,101 +220,81 @@ var main = function(ex) {
         return numberLine;
     }
 
-    var a = NumberLine();
-    a.draw();
-
     /*****************************************************************
+     * Question
+     ****************************************************************/
 
-	 * Question
-	 ****************************************************************/
+    function Question(questionNum){
+        var question = {};
+        question.questionNum = questionNum;
+        question.x = undefined;
+        question.y = undefined;
+        question.numberLine = undefined;
+        question.subquestions = [];
+        question.currSubquestion = 0;
 
-	function Question(questionNum){
-		var question = {};
-		question.questionNum = questionNum;
-		question.x = undefined;
-		question.y = undefined;
-		question.numberLine = undefined;
-		question.subquestions = [];
-		question.currSubquestion = 0;
-		//next button
+        question.init = function(){
+            // generate x and y
+            switch (question.questionNum){
+                case 0: // both numbers are positive
+                    question.y = getRandomInt(1, 8);
+                    question.x = getRandomInt(question.y + 1, 10);
+                    break;
+                case 1: // one number is positive and one is negative
+                    // randomly pick either x or y to be negative
+                    var xIsNegative = Math.random();
+                    if (xIsNegative < .5){
+                        question.x = 0 - getRandomInt(1, 10);
+                        question.y = getRandomInt(1, 10);
+                    }
+                    else{
+                        question.x = getRandomInt(1, 10);
+                        question.y = 0 - getRandomInt(1, 10);
+                    }
+                    break;
+                default:
+                    break;
+            }
+            // create numberline
+            question.numberLine = NumberLine();
+            question.numberLine.setX(question.x);
+            question.numberLine.setY(question.y);
+            question.numberLine.setCurPoint(question.x);
+            question.numberLine.draw();
+            flow.x = question.x;
+            flow.y = question.y;
+            flow.curPoint = question.x;
 
-		
+            // create subquestions
+            // initial question
+            var initialQuestion = SubQuestion("initial");
+            initialQuestion.y = question.y;
+            question.subquestions.push(initialQuestion);
+            // jump question
+            var jumpQuestion = SubQuestion("jump");
+            jumpQuestion.x = question.x;
+            jumpQuestion.y = question.y;
+            jumpQuestion.answer = question.x - question.y;
+            question.subquestions.push(jumpQuestion);
+            // reached question
+            var reachedQuestion = SubQuestion("reached");
+            reachedQuestion.x = question.x;
+            reachedQuestion.y = question.y;
+            reachedQuestion.answer = true;
+            question.subquestions.push(reachedQuestion);
 
-		question.init = function(){
-			console.log("And so it begins");
-			// generate x and y
-			switch (question.questionNum){
-				case 0: // both numbers are positive
-					question.y = getRandomInt(1, 8);
-					question.x = getRandomInt(question.y + 1, 10);
-					break;
-				case 1: // one number is positive and one is negative
-					// randomly pick either x or y to be negative
-					var xIsNegative = Math.random();
-					if (xIsNegative < .5){
-						question.x = 0 - getRandomInt(1, 10);
-						question.y = getRandomInt(1, 10);
-					}
-					else{
-						question.x = getRandomInt(1, 10);
-						question.y = 0 - getRandomInt(1, 10);
-					}
-					break;
-				default:
-					break;
-			}
-			// create numberline
-			question.numberLine = NumberLine();
-			question.numberLine.setX(question.x);
-			question.numberLine.setY(question.y);
-			question.numberLine.setCurPoint(question.x);
+            // init current question
+            question.getCurrentSubquestion().init();
 
-			// create subquestions
-			// initial question
-			var initialQuestion = SubQuestion("initial");
-			initialQuestion.y = question.y;
-			question.subquestions.push(initialQuestion);
-			// create jump and reached questions
-			var numJumpReachedQuestions = getNumTimesToIterateSubquestion(question.x, question.y);
-			// jump question
-			var jumpQuestion = SubQuestion("jump");
-			jumpQuestion.x = question.x;
-			jumpQuestion.y = question.y;
-			jumpQuestion.answer = question.x - question.y;
-			question.subquestions.push(jumpQuestion);
-			// reached question
-			var reachedQuestion = SubQuestion("reached");
-			reachedQuestion.x = question.x;
-			reachedQuestion.y = question.y;
-			reachedQuestion.answer = true;
-			question.subquestions.push(reachedQuestion);
+            console.log(question.x);
+            console.log(question.y);
+            console.log(question.subquestions);
+        };
 
-			// init current question
-			question.getCurrentSubquestion().init();
+        question.draw = function(){
+            question.getCurrentSubquestion().draw();
+        };
 
-			
-
-			console.log(question.x);
-			console.log(question.y);
-			console.log(question.subquestions);
-
-        question.nextButton = ex.createButton(ex.width()-100, ex.height()-50, "next", {color:"blue"}).on("click", function(){
-				console.log(question.subquestions);
-				if(question.getCurrentSubquestion().correct === true){
-					console.log("correct!");
-					question.currSubquestion += 1;
-					question.getCurrentSubquestion().init();
-					question.draw();
-				} else {
-					console.log("incorrect");
-				};
-			});
-		};
-
-		question.draw = function(){
-			question.getCurrentSubquestion().draw();
-			question.numberLine.draw();
-		};
         question.getCurrentSubquestion = function(){
             return question.subquestions[question.currSubquestion];
         };
@@ -360,7 +314,6 @@ var main = function(ex) {
         subquestion.answer = undefined;
         subquestion.textLines = [];
         subquestion.possibleAnswersDropDown = undefined;
-        subquestion.selectedAnswer = undefined
 
         subquestion.init = function(){
             //subquestion.nextButton = ex.createButton(ex.width(), ex.height(), "next", function(){alert("stuff")});
@@ -369,7 +322,7 @@ var main = function(ex) {
                     subquestion.textLines.push("Let's calculate x % " + subquestion.y.toString());
                     subquestion.textLines.push("What are the possible answers?");
                     var dropdownX = 440;
-                    var dropdownY = 240;
+                    var dropdownY = 285;
                     // create options for the dropdown as strings
                     var options = [];
                     if (subquestion.y > 0){
@@ -386,40 +339,22 @@ var main = function(ex) {
                     }
                     var answer = options[0];
                     var shuffledOptions = shuffle(options); // shuffle the options
+                    // because javascript is dumb
+                    var foo = function(){ alert("foo")};
+                    var bar = function(){ alert("bar")};
                     var elements = {};
-                    for (var i = 0; i < shuffledOptions.length; i++){
-                    	elements[shuffledOptions[i]] = undefined;
-                    }
+                    elements[shuffledOptions[0]] = foo;
+                    elements[shuffledOptions[1]] = bar;
+                    elements[shuffledOptions[2]] = bar;
+                    elements[shuffledOptions[3]] = bar;
                     subquestion.possibleAnswersDropDown = ex.createDropdown(dropdownX, dropdownY,"Choose one",{
                                                                 color: "white",
                                                                 elements: elements
                                                             });
                     break;
                 case ("jump"):
-                	subquestion.textLines.push("Let's calculate x % " + subquestion.y.toString());
-                	subquestion.textLines.push("We calculate " + subquestion.x.toString() + " % " 
-                								+ subquestion.y.toString() + " by adding or subtracting "
-                								+ subquestion.y.toString());
-                	subquestion.textLines.push("        until we reach the target range.");
-                	subquestion.textLines.push("Click where we jump to next.");
                     break;
                 case ("reached"):
-                	subquestion.textLines.push("Let's calculate x % " + subquestion.y.toString());	
-                	subquestion.textLines.push("We calculate " + subquestion.x.toString() + " % " 
-                								+ subquestion.y.toString() + " by adding or subtracting "
-                								+ subquestion.y.toString());
-                	subquestion.textLines.push("        until we reach the target range.");
-                	subquestion.textLines.push("Click where we jump to next.");
-                	subquestion.textLines.push("");
-                	subquestion.textLines.push("Have we reached the answer?");
-                	// dropdown for reached
-                	var dropdownX = 440;
-                    var dropdownY = 280;
-                    subquestion.possibleAnswersDropDown = ex.createDropdown(dropdownX, dropdownY,"Choose one",{
-                                                                color: "white",
-                                                                elements: {yes: undefined,
-                                                                		   no: undefined}
-                                                            });
                     break;
                 default:
                     break;
@@ -428,7 +363,7 @@ var main = function(ex) {
 
         subquestion.draw = function(){
             var textStartX = 30;
-            var textStartY = 205;
+            var textStartY = 250;
             var spacing = 35;
             for (var i = 0; i < subquestion.textLines.length; i++){
                 ex.createParagraph(textStartX, textStartY + i*spacing, subquestion.textLines[i],
@@ -438,9 +373,5 @@ var main = function(ex) {
 
         return subquestion;
     }
-
-
-    flow = Flow();
-    flow.init();
 
 };
