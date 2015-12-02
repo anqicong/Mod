@@ -113,16 +113,6 @@ var main = function(ex) {
      * NumberLine
      ****************************************************************/
 
-    function check(i){ 
-        return function(){
-            if (i == numberLine.curPoint - numberLine.y) {
-                numberLine.curPoint = numberLine.curPoint - numberLine.y;
-                return true;
-            }
-            else return false;
-        } 
-    };
-
     function NumberLine(){
         var numberLine = {};
         numberLine.x = undefined;
@@ -141,6 +131,15 @@ var main = function(ex) {
         var size = 10;
         var a = {x1 : l.x1, y1 : l.y1, x2 : l.x1 + size, y2 : l.y1 - size};
         a.size = size;
+
+        function check(i){ 
+            return function(){
+                if (i == numberLine.curPoint - numberLine.y) {
+                    numberLine.curPoint = numberLine.curPoint - numberLine.y;
+                    return true;
+                }
+            } 
+        };
 
         numberLine.draw = function(){
             function drawLine() { 
@@ -217,6 +216,9 @@ var main = function(ex) {
         return numberLine;
     }
 
+    var a = NumberLine();
+    a.draw();
+
     /*****************************************************************
      * Question
      ****************************************************************/
@@ -284,10 +286,9 @@ var main = function(ex) {
             console.log(question.subquestions);
         };
 
-		question.draw = function(){
-			question.getCurrentSubquestion().draw();
-			question.numberLine.draw();
-		};
+        question.draw = function(){
+            question.getCurrentSubquestion().draw();
+        };
 
         question.getCurrentSubquestion = function(){
             return question.subquestions[question.currSubquestion];
@@ -316,7 +317,7 @@ var main = function(ex) {
                     subquestion.textLines.push("Let's calculate x % " + subquestion.y.toString());
                     subquestion.textLines.push("What are the possible answers?");
                     var dropdownX = 440;
-                    var dropdownY = 235;
+                    var dropdownY = 285;
                     // create options for the dropdown as strings
                     var options = [];
                     if (subquestion.y > 0){
@@ -334,40 +335,21 @@ var main = function(ex) {
                     var answer = options[0];
                     var shuffledOptions = shuffle(options); // shuffle the options
                     // because javascript is dumb
+                    var foo = function(){ alert("foo")};
+                    var bar = function(){ alert("bar")};
                     var elements = {};
-                    for (var i = 0; i < shuffledOptions.length; i++){
-                    	elements[shuffledOptions[i]] = undefined;
-                    }
+                    elements[shuffledOptions[0]] = foo;
+                    elements[shuffledOptions[1]] = bar;
+                    elements[shuffledOptions[2]] = bar;
+                    elements[shuffledOptions[3]] = bar;
                     subquestion.possibleAnswersDropDown = ex.createDropdown(dropdownX, dropdownY,"Choose one",{
                                                                 color: "white",
                                                                 elements: elements
                                                             });
                     break;
                 case ("jump"):
-                	subquestion.textLines.push("Let's calculate x % " + subquestion.y.toString());
-                	subquestion.textLines.push("We calculate " + subquestion.x.toString() + " % " 
-                								+ subquestion.y.toString() + " by adding or subtracting "
-                								+ subquestion.y.toString());
-                	subquestion.textLines.push("        until we reach the target range.");
-                	subquestion.textLines.push("Click where we jump to next.");
                     break;
                 case ("reached"):
-                	subquestion.textLines.push("Let's calculate x % " + subquestion.y.toString());	
-                	subquestion.textLines.push("We calculate " + subquestion.x.toString() + " % " 
-                								+ subquestion.y.toString() + " by adding or subtracting "
-                								+ subquestion.y.toString());
-                	subquestion.textLines.push("        until we reach the target range.");
-                	subquestion.textLines.push("Click where we jump to next.");
-                	subquestion.textLines.push("");
-                	subquestion.textLines.push("Have we reached the answer?");
-                	// dropdown for reached
-                	var dropdownX = 440;
-                    var dropdownY = 280;
-                    subquestion.possibleAnswersDropDown = ex.createDropdown(dropdownX, dropdownY,"Choose one",{
-                                                                color: "white",
-                                                                elements: {yes: undefined,
-                                                                		   no: undefined}
-                                                            });
                     break;
                 default:
                     break;
@@ -376,7 +358,7 @@ var main = function(ex) {
 
         subquestion.draw = function(){
             var textStartX = 30;
-            var textStartY = 200;
+            var textStartY = 250;
             var spacing = 35;
             for (var i = 0; i < subquestion.textLines.length; i++){
                 ex.createParagraph(textStartX, textStartY + i*spacing, subquestion.textLines[i],
