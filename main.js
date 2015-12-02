@@ -179,6 +179,14 @@ var main = function(ex) {
 
         };
 
+        numberLine.setX = function(x){
+            numberLine.x = x;
+        };
+
+        numberLine.setY = function(y){
+            numberLine.y = y;
+        };
+
         numberLine.setCurPoint = function(newCurPoint){
             numberLine.curPoint = newCurPoint;
         };
@@ -239,7 +247,6 @@ var main = function(ex) {
 			}
 			// create numberline
 			question.numberLine = NumberLine();
-			question.numberLine.init();
 			question.numberLine.setX(question.x);
 			question.numberLine.setY(question.y);
 			question.numberLine.setCurPoint(question.x);
