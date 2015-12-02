@@ -207,9 +207,6 @@ var main = function(ex) {
         return numberLine;
     }
 
-    var a = NumberLine();
-    a.draw();
-
     /*****************************************************************
 	 * Question
 	 ****************************************************************/
@@ -337,8 +334,30 @@ var main = function(ex) {
                                                             });
                     break;
                 case ("jump"):
+                	subquestion.textLines.push("Let's calculate x % " + subquestion.y.toString());
+                	subquestion.textLines.push("We calculate " + subquestion.x.toString() + " % " 
+                								+ subquestion.y.toString() + " by adding or subtracting "
+                								+ subquestion.y.toString());
+                	subquestion.textLines.push("        until we reach the target range.");
+                	subquestion.textLines.push("Click where we jump to next.");
                     break;
                 case ("reached"):
+                	subquestion.textLines.push("Let's calculate x % " + subquestion.y.toString());	
+                	subquestion.textLines.push("We calculate " + subquestion.x.toString() + " % " 
+                								+ subquestion.y.toString() + " by adding or subtracting "
+                								+ subquestion.y.toString());
+                	subquestion.textLines.push("        until we reach the target range.");
+                	subquestion.textLines.push("Click where we jump to next.");
+                	subquestion.textLines.push("");
+                	subquestion.textLines.push("Have we reached the answer?");
+                	// dropdown for reached
+                	var dropdownX = 440;
+                    var dropdownY = 280;
+                    subquestion.possibleAnswersDropDown = ex.createDropdown(dropdownX, dropdownY,"Choose one",{
+                                                                color: "white",
+                                                                elements: {yes: undefined,
+                                                                		   no: undefined}
+                                                            });
                     break;
                 default:
                     break;
