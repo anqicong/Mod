@@ -246,9 +246,6 @@ var main = function(ex) {
         return numberLine;
     }
 
-    var a = NumberLine();
-    a.draw();
-
     /*****************************************************************
 
 	 * Question
@@ -262,9 +259,6 @@ var main = function(ex) {
 		question.numberLine = undefined;
 		question.subquestions = [];
 		question.currSubquestion = 0;
-		//next button
-
-		
 
 		question.init = function(){
 			console.log("And so it begins");
@@ -324,9 +318,10 @@ var main = function(ex) {
 			console.log(question.y);
 			console.log(question.subquestions);
 
-        question.nextButton = ex.createButton(ex.width()-100, ex.height()-50, "next", {color:"blue"}).on("click", function(){
+        question.nextButton = ex.createButton(ex.width()-75, ex.height()-50, "next", {color:"blue"}).on("click", function(){
 				console.log(question.subquestions);
-				if(question.getCurrentSubquestion().correct === true){
+				var correct = question.getCurrentSubquestion().checkAnswer();
+				if(correct){
 					console.log("correct!");
 					question.currSubquestion += 1;
 					question.getCurrentSubquestion().init();
@@ -338,6 +333,9 @@ var main = function(ex) {
 		};
 
 		question.draw = function(){
+			// draw the question number
+			ex.createParagraph(10, 10, "Question "+ (question.questionNum+1).toString(), {size:"xlarge"});
+			// draw its child things
 			question.getCurrentSubquestion().draw();
 			question.numberLine.draw();
 		};
@@ -360,7 +358,8 @@ var main = function(ex) {
         subquestion.answer = undefined;
         subquestion.textLines = [];
         subquestion.possibleAnswersDropDown = undefined;
-        subquestion.selectedAnswer = undefined
+        subquestion.selectedAnswer = "";
+        subquestion.shuffledOptions = undefined;
 
         subquestion.init = function(){
             //subquestion.nextButton = ex.createButton(ex.width(), ex.height(), "next", function(){alert("stuff")});
@@ -384,11 +383,11 @@ var main = function(ex) {
                         options.push(listToString1D(getRange(0, -subquestion.y)));
                         options.push(listToString1D(getRange(0, -subquestion.y + 1)));
                     }
-                    var answer = options[0];
-                    var shuffledOptions = shuffle(options); // shuffle the options
+                    subquestion.answer = options[0];
+                    subquestion.shuffledOptions = shuffle(options); // shuffle the options
                     var elements = {};
-                    for (var i = 0; i < shuffledOptions.length; i++){
-                    	elements[shuffledOptions[i]] = undefined;
+                    for (var i = 0; i < subquestion.shuffledOptions.length; i++){
+                    	elements[subquestion.shuffledOptions[i]] = undefined;
                     }
                     subquestion.possibleAnswersDropDown = ex.createDropdown(dropdownX, dropdownY,"Choose one",{
                                                                 color: "white",
@@ -435,6 +434,17 @@ var main = function(ex) {
                                         {size: "xlarge"});
             }
         };
+
+        subquestion.checkAnswer = function(){
+        	switch (subquestion.type){
+        		case "initial": 
+        			alert(subquestion.possibleAnswersDropDown.text());
+        			break;
+        		default:
+        			return false;
+        			break;
+        	}
+        }
 
         return subquestion;
     }
