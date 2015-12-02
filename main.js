@@ -139,6 +139,9 @@ var main = function(ex) {
         return flow;
     }
 
+    flow = Flow();
+    flow.init();
+
     /*****************************************************************
      * NumberLine
      ****************************************************************/
@@ -164,11 +167,12 @@ var main = function(ex) {
 
         function check(i){ 
             return function(){
-                if (i == numberLine.curPoint - numberLine.y) {
-                    numberLine.curPoint = numberLine.curPoint - numberLine.y;
+                if (i == flow.curPoint - flow.y) {
+                    flow.curPoint = flow.curPoint - flow.y;
                     return true;
                 }
-            } 
+                else return false;
+            }
         };
 
         numberLine.draw = function(){
@@ -286,6 +290,9 @@ var main = function(ex) {
             question.numberLine.setX(question.x);
             question.numberLine.setY(question.y);
             question.numberLine.setCurPoint(question.x);
+            flow.x = question.x;
+            flow.y = question.y;
+            flow.curPoint = question.x;
 
             // create subquestions
             // initial question
@@ -454,9 +461,5 @@ var main = function(ex) {
 
         return subquestion;
     }
-
-
-    flow = Flow();
-    flow.init();
 
 };
