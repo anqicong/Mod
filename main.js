@@ -256,6 +256,7 @@ var main = function(ex) {
 
 		question.draw = function(){
 			question.getCurrentSubquestion().draw();
+			question.numberLine.draw();
 		};
 
 		question.getCurrentSubquestion = function(){
