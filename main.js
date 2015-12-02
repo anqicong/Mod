@@ -50,24 +50,18 @@ var main = function(ex) {
     	if (x > 0 && y > 0){ // both are positive
     		count = Math.trunc((x - x%y)/y);
     	}
-    	else if (x > 0){ // only x is positive
-    		while (x >= y){
+    	else{
+    		x = Math.abs(x);
+    		y = -Math.abs(y);
+    		while (x > y){
     			count++;
     			x += y;
     		}
     		count--;
     	}
-    	else if (y > 0){ // only y is positive
-
-    	}
     	// shouldn't be a case when both are negative
     	return count;
     }
-
-    console.log("------");
-    console.log(getNumTimesToIterateSubquestion(2, -3));
-    console.log(getNumTimesToIterateSubquestion(5, -3));
-    console.log(getNumTimesToIterateSubquestion(7, -3));
 
     function listToString2D(list) {
         var result = "[";
