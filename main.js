@@ -105,6 +105,11 @@ var main = function(ex) {
         };
 
         numberLine.drawArrow = function(from, to){
+        	height = 20
+        	ctx.beginPath();
+			ctx.moveTo(from);
+			ctx.quadraticCurveTo((from.x + to.x)/2, from.y + 20, to.x, to.y);
+			ctx.stroke();
             //todo
         };
 
