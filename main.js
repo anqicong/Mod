@@ -300,16 +300,13 @@ var main = function(ex) {
 						options.push(listToString1D(getRange(0, -subquestion.y)));
 						options.push(listToString1D(getRange(0, -subquestion.y + 1)));
 					}
-					var answer = options[0];
+					subquestion.answer = options[0];
 					var shuffledOptions = shuffle(options); // shuffle the options
 					// because javascript is dumb
-					var foo = function(){ alert("foo")};
-					var bar = function(){ alert("bar")};
 					var elements = {};
-					elements[shuffledOptions[0]] = foo;
-					elements[shuffledOptions[1]] = bar;
-					elements[shuffledOptions[2]] = bar;
-					elements[shuffledOptions[3]] = bar;
+					for (var i = 0; i < shuffledOptions.length; i++){
+						elements[shuffledOptions[i]] = undefined;
+					}
 					subquestion.possibleAnswersDropDown = ex.createDropdown(dropdownX, dropdownY,"Choose one",{
 													            color: "white",
 													            elements: elements
