@@ -21,6 +21,14 @@ var main = function(ex) {
      * Utility functions
      ****************************************************************/
 
+    function div(x, y){
+    	return ~~(x / y);
+    }
+
+    function mod(x, y){
+    	return x - div(x, y)*y;
+    }
+
     function getRandomInt(min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
@@ -32,6 +40,35 @@ var main = function(ex) {
         }
         return a;
     }
+
+    // how many times do you have to subtract/add y from/to x?
+    // e.g. for 5 % 2, you need to do it twice
+    // works for negatives too
+    // this is because int division doesn't do the thing I want...
+    function getNumTimesToIterateSubquestion(x, y){
+    	var count = 0;
+    	if (x > 0 && y > 0){ // both are positive
+    		count = Math.trunc((x - x%y)/y);
+    	}
+    	else if (x > 0){ // only x is positive
+    		while (x >= y){
+    			count++;
+    			x += y;
+    		}
+    		count--;
+    	}
+    	else if (y > 0){ // only y is positive
+
+    	}
+    	// shouldn't be a case when both are negative
+    	return count;
+    }
+
+    console.log("------");
+    alert(5%-3);
+    console.log(getNumTimesToIterateSubquestion(2, -3));
+    console.log(getNumTimesToIterateSubquestion(5, -3));
+    console.log(getNumTimesToIterateSubquestion(7, -3));
 
     function listToString2D(list) {
         var result = "[";
@@ -253,6 +290,8 @@ var main = function(ex) {
 			var initialQuestion = SubQuestion("initial");
 			initialQuestion.y = question.y;
 			question.subquestions.push(initialQuestion);
+			// create jump and reached questions
+			var numJumpReachedQuestions = getNumTimesToIterateSubquestion(question.x, question.y);
 			// jump question
 			var jumpQuestion = SubQuestion("jump");
 			jumpQuestion.x = question.x;
