@@ -157,8 +157,10 @@ var main = function(ex) {
 			question.numberLine.setCurPoint(question.x);
 			// create and init subquestions
 			// initial question
-			question.subquestions.push(SubQuestion("initial"));
-			question.subquestions[0].init();
+			var initialQuestion = SubQuestion("initial");
+			initialQuestion.y = question.y;
+			initialQuestion.init();
+			question.subquestions.push(initialQuestion);
 			// jump question
 			var jumpQuestion = SubQuestion("jump");
 			jumpQuestion.x = question.x;
@@ -201,10 +203,10 @@ var main = function(ex) {
 		subquestion.init = function(){
 			switch (subquestion.type){
 				case ("initial"):
-					subquestion.textLines.push("Let's calculate x % " + toString(subquestion.y));
+					subquestion.textLines.push("Let's calculate x % " + subquestion.y.toString());
 					subquestion.textLines.push("What are the possible answers?");
-					var dropdownX = 400;
-					var dropdownY = 300;
+					var dropdownX = 440;
+					var dropdownY = 285;
 					var foo = function(){alert("foo")};
 					var bar = function(){alert("bar")};
 					subquestion.possibleAnswersDropDown = ex.createDropdown(dropdownX, dropdownY,"Choose one",{
@@ -225,7 +227,13 @@ var main = function(ex) {
 		};
 
 		subquestion.draw = function(){
-
+			var textStartX = 30;
+			var textStartY = 250;
+			var spacing = 35;
+			for (var i = 0; i < subquestion.textLines.length; i++){
+				ex.createParagraph(textStartX, textStartY + i*spacing, subquestion.textLines[i],
+                                		{size: "xlarge"});
+			}
 		};
 
 		return subquestion;
