@@ -264,7 +264,7 @@ var main = function(ex) {
 		question.currSubquestion = 0;
 		//next button
 
-		question.nextButton = ex.createButton(ex.width()-50, ex.height()-100, "next").on("click", function(){
+		question.nextButton = ex.createButton(ex.width()-100, ex.height()-50, "next", {color:"blue"}).on("click", function(){
 				alert("next!");
 				if(question.currSubquestion.correct){
 					ex.alert("correct!");
@@ -275,6 +275,7 @@ var main = function(ex) {
 					ex.alert("incorrect!");
 				};
 			});
+
 		question.init = function(){
 			// generate x and y
 			switch (question.questionNum){
@@ -364,7 +365,7 @@ var main = function(ex) {
                     subquestion.textLines.push("Let's calculate x % " + subquestion.y.toString());
                     subquestion.textLines.push("What are the possible answers?");
                     var dropdownX = 440;
-                    var dropdownY = 285;
+                    var dropdownY = 240;
                     // create options for the dropdown as strings
                     var options = [];
                     if (subquestion.y > 0){
@@ -422,7 +423,7 @@ var main = function(ex) {
 
         subquestion.draw = function(){
             var textStartX = 30;
-            var textStartY = 250;
+            var textStartY = 205;
             var spacing = 35;
             for (var i = 0; i < subquestion.textLines.length; i++){
                 ex.createParagraph(textStartX, textStartY + i*spacing, subquestion.textLines[i],
