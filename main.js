@@ -22,7 +22,7 @@ var main = function(ex) {
      ****************************************************************/
 
     function div(x, y){
-    	return ~~(x / y);
+    	return Math.floor(x / y);
     }
 
     function mod(x, y){
@@ -65,7 +65,6 @@ var main = function(ex) {
     }
 
     console.log("------");
-    alert(5%-3);
     console.log(getNumTimesToIterateSubquestion(2, -3));
     console.log(getNumTimesToIterateSubquestion(5, -3));
     console.log(getNumTimesToIterateSubquestion(7, -3));
