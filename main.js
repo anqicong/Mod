@@ -264,19 +264,10 @@ var main = function(ex) {
 		question.currSubquestion = 0;
 		//next button
 
-		question.nextButton = ex.createButton(ex.width()-100, ex.height()-50, "next", {color:"blue"}).on("click", function(){
-				alert("next!");
-				if(question.currSubquestion.correct){
-					ex.alert("correct!");
-					console.log("happens");
-					question.currSubquestion += 1;
-					question.getCurrentSubquestion().init();
-				} else {
-					ex.alert("incorrect!");
-				};
-			});
+		
 
 		question.init = function(){
+			console.log("And so it begins");
 			// generate x and y
 			switch (question.questionNum){
 				case 0: // both numbers are positive
@@ -326,6 +317,24 @@ var main = function(ex) {
 
 			// init current question
 			question.getCurrentSubquestion().init();
+
+			
+
+			console.log(question.x);
+			console.log(question.y);
+			console.log(question.subquestions);
+
+        question.nextButton = ex.createButton(ex.width()-100, ex.height()-50, "next", {color:"blue"}).on("click", function(){
+				console.log(question.subquestions);
+				if(question.getCurrentSubquestion().correct === true){
+					console.log("correct!");
+					question.currSubquestion += 1;
+					question.getCurrentSubquestion().init();
+					question.draw();
+				} else {
+					console.log("incorrect");
+				};
+			});
 		};
 
 		question.draw = function(){
