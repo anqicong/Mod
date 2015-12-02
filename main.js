@@ -291,38 +291,25 @@ var main = function(ex) {
 					if (subquestion.y > 0){
 						options.push(listToString1D(getRange(0, subquestion.y))); // correct answer
 						options.push(listToString1D(getRange(0, subquestion.y + 1)));
+						options.push(listToString1D(getRange(-subquestion.y, 1)));
+						options.push(listToString1D(getRange(-subquestion.y + 1, 1)));
 					}
 					else{
 						options.push(listToString1D(getRange(subquestion.y + 1, 1))); // correct answer
 						options.push(listToString1D(getRange(subquestion.y, 1)));
-					}
-					if (subquestion.x > 0){
-						options.push(listToString1D(getRange(0, subquestion.x)));
-						options.push(listToString1D(getRange(0, subquestion.x + 1)));
-					}
-					else{
-						options.push(listToString1D(getRange(subquestion.x + 1, 1)));
-						options.push(listToString1D(getRange(subquestion.x, 1)));
+						options.push(listToString1D(getRange(0, -subquestion.y)));
+						options.push(listToString1D(getRange(0, -subquestion.y + 1)));
 					}
 					var answer = options[0];
 					var shuffledOptions = shuffle(options); // shuffle the options
 					// because javascript is dumb
-					var opt0 = shuffledOptions[0];
-					var opt1 = shuffledOptions[1];
-					var opt2 = shuffledOptions[2];
-					var opt3 = shuffledOptions[3];
 					var foo = function(){ alert("foo")};
 					var bar = function(){ alert("bar")};
-					var thing = "hi there"
-					var thing2 = "hey there"
-					var thing3 = "hello there"
-					var thing4 = "how do you do"
 					var elements = {};
-					elements[thing] = foo;
-					elements[thing2] = bar;
-					elements[thing3] = bar;
-					elements[thing4] = bar;
-					console.log(elements);
+					elements[shuffledOptions[0]] = foo;
+					elements[shuffledOptions[1]] = bar;
+					elements[shuffledOptions[2]] = bar;
+					elements[shuffledOptions[3]] = bar;
 					subquestion.possibleAnswersDropDown = ex.createDropdown(dropdownX, dropdownY,"Choose one",{
 													            color: "white",
 													            elements: elements
