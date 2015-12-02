@@ -18,9 +18,70 @@ var main = function(ex) {
         }
 	};
 
+	/*****************************************************************
+	 * Utility functions
+	 ****************************************************************/
+
 	function getRandomInt(min, max) {
 	    return Math.floor(Math.random() * (max - min + 1)) + min;
 	}
+
+	function getRange(min, max){
+		var a = [];
+		for (var i = min; i < max; i++){
+			a.push(i);
+		}
+		return a;
+	}
+
+	function listToString2D(list) {
+		var result = "[";
+		for (var i = 0; i < list.length; i++) {
+			result += "[";
+			for (var j = 0; j < list[i].length; j++) {
+				if (j == list.length - 1) {
+					result += list[i][j].toString();
+				}else {
+					result += list[i][j].toString() + ", ";
+				}
+			}
+			result += "]";
+			if (i != list.length - 1) {
+				result += ", ";
+			}
+		}
+		result += "]";
+		return result;
+	}
+
+	function listToString1D(list){
+		return "[" + list.join(", ") + "]";
+	}
+
+	// copied from stack overflow
+	// http://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
+	function shuffle(array) {
+	  var currentIndex = array.length, temporaryValue, randomIndex ;
+
+	  // While there remain elements to shuffle...
+	  while (0 !== currentIndex) {
+
+	    // Pick a remaining element...
+	    randomIndex = Math.floor(Math.random() * currentIndex);
+	    currentIndex -= 1;
+
+	    // And swap it with the current element.
+	    temporaryValue = array[currentIndex];
+	    array[currentIndex] = array[randomIndex];
+	    array[randomIndex] = temporaryValue;
+	  }
+
+	  return array;
+	}
+
+	/*****************************************************************
+	 * Flow
+	 ****************************************************************/
 
 	function Flow(){
 		var flow = {};
@@ -50,6 +111,10 @@ var main = function(ex) {
 
 		return flow;
 	}
+
+	/*****************************************************************
+	 * NumberLine
+	 ****************************************************************/
 
 	function NumberLine(){
         var numberLine = {};
@@ -121,6 +186,10 @@ var main = function(ex) {
         return numberLine;
     }
 
+    /*****************************************************************
+	 * Question
+	 ****************************************************************/
+
 	function Question(questionNum){
 		var question = {};
 		question.questionNum = questionNum;
@@ -131,6 +200,7 @@ var main = function(ex) {
 		question.currSubquestion = 0;
 
 		question.init = function(){
+			// generate x and y
 			switch (question.questionNum){
 				case 0: // both numbers are positive
 					question.y = getRandomInt(1, 8);
@@ -195,6 +265,10 @@ var main = function(ex) {
 		return question;
 	}
 
+	/*****************************************************************
+	 * Subquestion
+	 ****************************************************************/
+
 	function SubQuestion(type){ // types can be: inital, jump, reached
 		var subquestion = {};
 		subquestion.type = type;
@@ -211,13 +285,40 @@ var main = function(ex) {
 					subquestion.textLines.push("What are the possible answers?");
 					var dropdownX = 440;
 					var dropdownY = 285;
-					var foo = function(){alert("foo")};
-					var bar = function(){alert("bar")};
+					// create options for the dropdown as strings
+					var options = [];
+					if (subquestion.y > 0){
+						options.push(listToString1D(getRange(0, subquestion.y))); // correct answer
+						options.push(listToString1D(getRange(0, subquestion.y + 1)));
+					}
+					else{
+						options.push(listToString1D(getRange(subquestion.y + 1, 1))); // correct answer
+						options.push(listToString1D(getRange(subquestion.y, 1)));
+					}
+					if (subquestion.x > 0){
+						options.push(listToString1D(getRange(0, subquestion.x)));
+						options.push(listToString1D(getRange(0, subquestion.x + 1)));
+					}
+					else{
+						options.push(listToString1D(getRange(subquestion.x + 1, 1)));
+						options.push(listToString1D(getRange(subquestion.x, 1)));
+					}
+					var answer = options[0];
+					var shuffledOptions = shuffle(options); // shuffle the options
+					// because javascript is dumb
+					var opt0 = shuffledOptions[0];
+					var opt1 = shuffledOptions[1];
+					var opt2 = shuffledOptions[2];
+					var opt3 = shuffledOptions[3];
+					var foo = function(){ alert("foo")};
+					var bar = function(){ alert("bar")};
 					subquestion.possibleAnswersDropDown = ex.createDropdown(dropdownX, dropdownY,"Choose one",{
 													            color: "white",
 													            elements: {
-													                foo: foo,
-													                bar: bar
+													                opt0: foo,
+													                opt1: bar,
+													                opt2: bar,
+													                opt3: bar
 													            }
 													        });
 					break;
