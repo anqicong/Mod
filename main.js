@@ -279,6 +279,7 @@ var main = function(ex) {
 		subquestion.possibleAnswersDropDown = undefined;
 
 		subquestion.init = function(){
+			//subquestion.nextButton = ex.createButton(ex.width(), ex.height(), "next", function(){alert("stuff")});
 			switch (subquestion.type){
 				case ("initial"):
 					subquestion.textLines.push("Let's calculate x % " + subquestion.y.toString());
@@ -312,14 +313,19 @@ var main = function(ex) {
 					var opt3 = shuffledOptions[3];
 					var foo = function(){ alert("foo")};
 					var bar = function(){ alert("bar")};
+					var thing = "hi there"
+					var thing2 = "hey there"
+					var thing3 = "hello there"
+					var thing4 = "how do you do"
+					var elements = {};
+					elements[thing] = foo;
+					elements[thing2] = bar;
+					elements[thing3] = bar;
+					elements[thing4] = bar;
+					console.log(elements);
 					subquestion.possibleAnswersDropDown = ex.createDropdown(dropdownX, dropdownY,"Choose one",{
 													            color: "white",
-													            elements: {
-													                opt0: foo,
-													                opt1: bar,
-													                opt2: bar,
-													                opt3: bar
-													            }
+													            elements: elements
 													        });
 					break;
 				case ("jump"):
