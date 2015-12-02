@@ -326,11 +326,6 @@ var main = function(ex) {
 
 			// init current question
 			question.getCurrentSubquestion().init();
-			
-
-			console.log(question.x);
-			console.log(question.y);
-			console.log(question.subquestions);
 		};
 
 		question.draw = function(){
@@ -382,39 +377,40 @@ var main = function(ex) {
                     }
                     var answer = options[0];
                     var shuffledOptions = shuffle(options); // shuffle the options
-                    // because javascript is dumb
-
                     var elements = {};
                     for (var i = 0; i < shuffledOptions.length; i++){
                     	elements[shuffledOptions[i]] = undefined;
                     }
-
-                    var foo = function(){ alert("foo"); subquestion.correct = true;};
-                    var bar = function(){ alert("bar"); subquestion.correct = false;};
-                    var elements = {};
-                    for (var i = 0; i < shuffledOptions.length; i++){
-						if (shuffledOptions[i] == answer){
-							elements[shuffledOptions[i]] = foo;
-						}
-						else{
-							elements[shuffledOptions[i]] = bar;
-						}
-					}/*
-                    elements[shuffledOptions[0]] = foo;
-                    elements[shuffledOptions[1]] = bar;
-                    elements[shuffledOptions[2]] = bar;
-                    elements[shuffledOptions[3]] = bar;*/
-
                     subquestion.possibleAnswersDropDown = ex.createDropdown(dropdownX, dropdownY,"Choose one",{
                                                                 color: "white",
                                                                 elements: elements
                                                             });
                     break;
                 case ("jump"):
-                	console.log("jump");
+                	subquestion.textLines.push("Let's calculate x % " + subquestion.y.toString());
+                	subquestion.textLines.push("We calculate " + subquestion.x.toString() + " % " 
+                								+ subquestion.y.toString() + " by adding or subtracting "
+                								+ subquestion.y.toString());
+                	subquestion.textLines.push("        until we reach the target range.");
+                	subquestion.textLines.push("Click where we jump to next.");
                     break;
                 case ("reached"):
-                	console.log("reached");
+                	subquestion.textLines.push("Let's calculate x % " + subquestion.y.toString());	
+                	subquestion.textLines.push("We calculate " + subquestion.x.toString() + " % " 
+                								+ subquestion.y.toString() + " by adding or subtracting "
+                								+ subquestion.y.toString());
+                	subquestion.textLines.push("        until we reach the target range.");
+                	subquestion.textLines.push("Click where we jump to next.");
+                	subquestion.textLines.push("");
+                	subquestion.textLines.push("Have we reached the answer?");
+                	// dropdown for reached
+                	var dropdownX = 440;
+                    var dropdownY = 280;
+                    subquestion.possibleAnswersDropDown = ex.createDropdown(dropdownX, dropdownY,"Choose one",{
+                                                                color: "white",
+                                                                elements: {yes: undefined,
+                                                                		   no: undefined}
+                                                            });
                     break;
                 default:
                     break;
