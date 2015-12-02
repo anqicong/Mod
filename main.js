@@ -441,7 +441,11 @@ var main = function(ex) {
         subquestion.checkAnswer = function(){
         	switch (subquestion.type){
         		case "initial": 
-        			alert(subquestion.possibleAnswersDropDown.text());
+        			if (subquestion.answer === subquestion.selectedAnswer){
+	        			alert("correct");
+	        		} else {
+	        			alert("incorrect!");
+	        		}
         			break;
         		default:
         			return false;
