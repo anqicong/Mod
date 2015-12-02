@@ -29,11 +29,12 @@ var main = function(ex) {
 		flow.questions = [];
 
 		flow.init = function(){
-			// create and init questions
+			// create questions
 			for (var i = 0; i < flow.numQuestions; i++){
 				flow.questions.push(Question(i));
-				flow.questions[i].init();
 			}
+			// init current
+			flow.getCurrentQuestion().init();
 			// draw!
 			flow.draw();
 		};
@@ -150,31 +151,34 @@ var main = function(ex) {
 				default:
 					break;
 			}
+			// create numberline
 			question.numberLine = NumberLine();
 			question.numberLine.init();
 			question.numberLine.setX(question.x);
 			question.numberLine.setY(question.y);
 			question.numberLine.setCurPoint(question.x);
-			// create and init subquestions
+
+			// create subquestions
 			// initial question
 			var initialQuestion = SubQuestion("initial");
 			initialQuestion.y = question.y;
-			initialQuestion.init();
 			question.subquestions.push(initialQuestion);
 			// jump question
 			var jumpQuestion = SubQuestion("jump");
 			jumpQuestion.x = question.x;
 			jumpQuestion.y = question.y;
 			jumpQuestion.answer = question.x - question.y;
-			jumpQuestion.init();
 			question.subquestions.push(jumpQuestion);
 			// reached question
 			var reachedQuestion = SubQuestion("reached");
 			reachedQuestion.x = question.x;
 			reachedQuestion.y = question.y;
 			reachedQuestion.answer = true;
-			reachedQuestion.init();
 			question.subquestions.push(reachedQuestion);
+
+			// init current question
+			question.getCurrentSubquestion().init();
+
 			console.log(question.x);
 			console.log(question.y);
 			console.log(question.subquestions);
