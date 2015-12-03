@@ -139,9 +139,6 @@ var main = function(ex) {
         return flow;
     }
 
-    flow = Flow();
-    flow.init();
-
     /*****************************************************************
      * NumberLine
      ****************************************************************/
@@ -167,12 +164,11 @@ var main = function(ex) {
 
         function check(i){ 
             return function(){
-                if (i == flow.curPoint - flow.y) {
-                    flow.curPoint = flow.curPoint - flow.y;
+                if (i == numberLine.curPoint - numberLine.y) {
+                    numberLine.curPoint = numberLine.curPoint - numberLine.y;
                     return true;
                 }
-                else return false;
-            }
+            } 
         };
 
         numberLine.draw = function(){
@@ -251,6 +247,7 @@ var main = function(ex) {
     }
 
     /*****************************************************************
+
      * Question
      ****************************************************************/
 
@@ -290,9 +287,6 @@ var main = function(ex) {
             question.numberLine.setX(question.x);
             question.numberLine.setY(question.y);
             question.numberLine.setCurPoint(question.x);
-            flow.x = question.x;
-            flow.y = question.y;
-            flow.curPoint = question.x;
 
             // create subquestions
             // initial question
@@ -329,7 +323,7 @@ var main = function(ex) {
                     console.log("correct!");
                     question.currSubquestion += 1;
                     question.getCurrentSubquestion().init();
-                    question.draw();
+                    flow.draw();
                 } else {
                     console.log("incorrect");
                 };
@@ -337,6 +331,7 @@ var main = function(ex) {
         };
 
         question.draw = function(){
+            ex.graphics.ctx.clearRect(0,0,ex.width(),ex.height());
             // draw the question number
             ex.createParagraph(10, 10, "Question "+ (question.questionNum+1).toString(), {size:"xlarge"});
             // draw its child things
@@ -438,8 +433,9 @@ var main = function(ex) {
             var textStartX = 30;
             var textStartY = 205;
             var spacing = 35;
+            ex.data.par;
             for (var i = 0; i < subquestion.textLines.length; i++){
-                ex.createParagraph(textStartX, textStartY + i*spacing, subquestion.textLines[i],
+                ex.data.par = ex.createParagraph(textStartX, textStartY + i*spacing, subquestion.textLines[i],
                                         {size: "xlarge"});
             }
         };
@@ -449,8 +445,11 @@ var main = function(ex) {
                 case "initial": 
                     if (subquestion.answer === subquestion.selectedAnswer){
                         alert("correct");
+                        if (ex.data.par != undefined) ex.data.par.remove();
+                        return true;
                     } else {
                         alert("incorrect!");
+                        return false;
                     }
                     break;
                 default:
@@ -461,5 +460,9 @@ var main = function(ex) {
 
         return subquestion;
     }
+
+
+    flow = Flow();
+    flow.init();
 
 };
