@@ -367,7 +367,7 @@ var main = function(ex) {
             //subquestion.nextButton = ex.createButton(ex.width(), ex.height(), "next", function(){alert("stuff")});
             switch (subquestion.type){
                 case ("initial"):
-                    subquestion.textLines.push("Let's calculate x % " + subquestion.y.toString());
+                    subquestion.textLines.push("Let's calculate x%" + subquestion.y.toString());
                     subquestion.textLines.push("What are the possible answers?");
                     var dropdownX = 440;
                     var dropdownY = 240;
@@ -398,18 +398,18 @@ var main = function(ex) {
                                                             });
                     break;
                 case ("jump"):
-                    subquestion.textLines.push("Let's calculate x % " + subquestion.y.toString());
-                    subquestion.textLines.push("We calculate " + subquestion.x.toString() + " % " 
-                                                + subquestion.y.toString() + " by adding or subtracting "
-                                                + subquestion.y.toString());
+                    subquestion.textLines.push("Let's calculate x%" + subquestion.y.toString());
+                    subquestion.textLines.push("We calculate " + subquestion.x.toString() + "%" 
+                                                + subquestion.y.toString() + 
+                    " by adding " + (subquestion.y * -1).toString());
                     subquestion.textLines.push("        until we reach the target range.");
                     subquestion.textLines.push("Click where we jump to next.");
                     break;
                 case ("reached"):
-                    subquestion.textLines.push("Let's calculate x % " + subquestion.y.toString());  
-                    subquestion.textLines.push("We calculate " + subquestion.x.toString() + " % " 
-                                                + subquestion.y.toString() + " by adding or subtracting "
-                                                + subquestion.y.toString());
+                    subquestion.textLines.push("Let's calculate x%" + subquestion.y.toString());  
+                    subquestion.textLines.push("We calculate " + subquestion.x.toString() + "%" 
+                                                + subquestion.y.toString() + 
+                    " by adding " + (subquestion.y * -1).toString());
                     subquestion.textLines.push("        until we reach the target range.");
                     subquestion.textLines.push("Click where we jump to next.");
                     subquestion.textLines.push("");
