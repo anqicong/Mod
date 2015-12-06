@@ -197,7 +197,7 @@ var main = function(ex) {
 
             function drawPoints() {
                 for (var i = 0; i < 21; i++) {
-                    ex.graphics.ctx.fillStyle = "#000000";
+                    ex.graphics.ctx.strokeStyle = "#000000";
                     ex.graphics.ctx.beginPath();
                     ex.graphics.ctx.arc(p.x + i * p.offset, p.y, p.r, 0, 2 * Math.PI);                    
                     ex.graphics.ctx.closePath();
@@ -270,6 +270,7 @@ var main = function(ex) {
             console.log(to);
             console.log((from.x+to.x)/2);
             height = 20
+            ex.graphics.ctx.fillStyle = "#000000";
             ex.graphics.ctx.beginPath();
             ex.graphics.ctx.moveTo(from.x + 14,from.y-10);
             ex.graphics.ctx.quadraticCurveTo((from.x + to.x + 28)/2, from.y - 50, to.x+14, to.y-10);
@@ -342,7 +343,7 @@ var main = function(ex) {
             question.numberLine.setX(question.x);
             question.numberLine.setY(question.y);
             question.numberLine.setCurPoint(question.x);
-            question.numberLine.setNextPoint(question.x);
+            question.numberLine.setNextPoint(question.x - question.y);
 
             // create subquestions
             // initial question
@@ -351,7 +352,7 @@ var main = function(ex) {
             question.subquestions.push(initialQuestion);
             // create jump and reached questions
             var numJumpReachedQuestions = getNumTimesToIterateSubquestion(question.x, question.y);
-            for (var i = 0; i < numJumpReachedQuestions + 1; i++){
+            for (var i = 0; i < numJumpReachedQuestions; i++){
                 // jump question
                 var jumpQuestion = SubQuestion("jump");
                 jumpQuestion.x = question.x;
@@ -362,7 +363,7 @@ var main = function(ex) {
                 var reachedQuestion = SubQuestion("reached");
                 reachedQuestion.x = question.x;
                 reachedQuestion.y = question.y;
-                if (i === numJumpReachedQuestions) {
+                if (i === numJumpReachedQuestions-1) {
                     reachedQuestion.answer = true;
                 } else {
                     reachedQuestion.answer = false;
