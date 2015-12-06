@@ -180,8 +180,8 @@ var main = function(ex) {
 
         numberLine.checkAnswer = function(){
             if(numberLine.selectedAnswer === numberLine.nextPoint){
-                numberLine.drawArrow(numberLine.numButtonList[numberLine.numButtonList.length - numberLine.curPoint].position(),
-                    numberLine.numButtonList[numberLine.numButtonList.length-numberLine.nextPoint].position());
+                numberLine.drawArrow(numberLine.numButtonList[numberLine.curPoint+10].position(),
+                    numberLine.numButtonList[numberLine.nextPoint+10].position());
                 numberLine.curPoint = numberLine.nextPoint;
                 numberLine.nextPoint = numberLine.curPoint - numberLine.y;
                 return true;
@@ -277,8 +277,8 @@ var main = function(ex) {
             console.log((from.x+to.x)/2);
             height = 20
             ex.graphics.ctx.beginPath();
-            ex.graphics.ctx.moveTo(from.x,from.y);
-            ex.graphics.ctx.quadraticCurveTo((from.x + to.x)/2, from.y - 20, to.x, to.y);
+            ex.graphics.ctx.moveTo(from.x + 14,from.y-10);
+            ex.graphics.ctx.quadraticCurveTo((from.x + to.x + 28)/2, from.y - 50, to.x+14, to.y-10);
             ex.graphics.ctx.stroke();
             //todo
         };
