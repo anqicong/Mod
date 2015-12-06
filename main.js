@@ -148,6 +148,8 @@ var main = function(ex) {
         numberLine.x = undefined;
         numberLine.y = undefined;
         numberLine.curPoint = undefined;
+        numberLine.nextPoint = undefined;
+        numberLine.selectedAnswer = undefined;
         numberLine.showTargetRange = false;
         numberLine.showX = false;
         numberLine.showY = true;
@@ -168,11 +170,22 @@ var main = function(ex) {
 
         function check(i){ 
             return function(){
+                numberLine.selectedAnswer = i;
                 if (i == numberLine.curPoint - numberLine.y) {
                     numberLine.curPoint = numberLine.curPoint - numberLine.y;
                     return true;
                 }
             } 
+        };
+
+        numberLine.checkAnswer = function(){
+            if(numberLine.selectedAnswer === numberLine.nextPoint){
+                numberLine.drawArrow(numberLine.numButtonList[numberLine.curPoint].position(),
+                    numberLine.numButtonList[numberLine.nextPoint].position());
+                numberLine.curPoint = numberLine.nextPoint;
+                numberLine.nextPoint = numberLine.curPoint - numberLine.y;
+                return true;
+            }
         };
 
         numberLine.draw = function(){
@@ -209,6 +222,7 @@ var main = function(ex) {
 
             function drawNumbers() {
                 for (var i = numberLine.minNum; i < numberLine.maxNum + 1; i++) {
+
                 	if (numberLine.showX && i == numberLine.x){ // color x
                 		var color = "orange";
                 	}
@@ -252,12 +266,16 @@ var main = function(ex) {
             numberLine.curPoint = newCurPoint;
         };
 
+        numberLine.setNextPoint = function(newNextPoint){
+            numberLine.nextPoint = newNextPoint;
+        };
+
         numberLine.drawArrow = function(from, to){
             height = 20
-            ctx.beginPath();
-            ctx.moveTo(from);
-            ctx.quadraticCurveTo((from.x + to.x)/2, from.y + 20, to.x, to.y);
-            ctx.stroke();
+            ex.graphics.ctx.beginPath();
+            ex.graphics.ctx.moveTo(from.x,from.y);
+            ex.graphics.ctx.quadraticCurveTo((from.x + to.x)/2, from.y + 20, to.x, to.y);
+            ex.graphics.ctx.stroke();
             //todo
         };
 
@@ -326,6 +344,7 @@ var main = function(ex) {
             question.numberLine.setX(question.x);
             question.numberLine.setY(question.y);
             question.numberLine.setCurPoint(question.x);
+            question.numberLine.setNextPoint(question.x);
 
             // create subquestions
             // initial question
@@ -335,18 +354,18 @@ var main = function(ex) {
             // create jump and reached questions
             var numJumpReachedQuestions = getNumTimesToIterateSubquestion(question.x, question.y);
             for (var i = 0; i < numJumpReachedQuestions; i++){
-            	// jump question
-	            var jumpQuestion = SubQuestion("jump");
-	            jumpQuestion.x = question.x;
-	            jumpQuestion.y = question.y;
-	            jumpQuestion.answer = question.x - question.y;
-	            question.subquestions.push(jumpQuestion);
-	            // reached question
-	            var reachedQuestion = SubQuestion("reached");
-	            reachedQuestion.x = question.x;
-	            reachedQuestion.y = question.y;
-	            reachedQuestion.answer = true;
-	            question.subquestions.push(reachedQuestion);
+                // jump question
+                var jumpQuestion = SubQuestion("jump");
+                jumpQuestion.x = question.x;
+                jumpQuestion.y = question.y;
+                jumpQuestion.answer = question.x - question.y;
+                question.subquestions.push(jumpQuestion);
+                // reached question
+                var reachedQuestion = SubQuestion("reached");
+                reachedQuestion.x = question.x;
+                reachedQuestion.y = question.y;
+                reachedQuestion.answer = true;
+                question.subquestions.push(reachedQuestion);
             }
 
             // init current question
@@ -362,7 +381,7 @@ var main = function(ex) {
                     console.log("correct!");
                     question.currSubquestion += 1;
                     question.getCurrentSubquestion().init();
-                    flow.draw();
+                    question.getCurrentSubquestion().draw();
                 } else {
                     console.log("incorrect");
                 };
@@ -373,7 +392,7 @@ var main = function(ex) {
             ex.graphics.ctx.clearRect(0,0,ex.width(),ex.height());
             // draw the question number
             ex.data.questionNumText = ex.createParagraph(10, 10, 
-            	"Question "+ (question.questionNum+1).toString(), {size:"xlarge"});
+                "Question "+ (question.questionNum+1).toString(), {size:"xlarge"});
             // draw its child things
             question.getCurrentSubquestion().draw();
             question.numberLine.draw();
@@ -446,7 +465,7 @@ var main = function(ex) {
                     subquestion.textLines.push("target range.");
                     subquestion.textLines.push("");
                     subquestion.textLines.push("Click where we jump to next.");
-                    break;	
+                    break;  
                 case ("reached"):
                     subquestion.textLines.push("Let's calculate " + subquestion.x.toString() + "%" + subquestion.y.toString());
                     subquestion.textLines.push("We calculate " + subquestion.x.toString() + "%" 
@@ -461,8 +480,8 @@ var main = function(ex) {
                     var dropdownY = 280;
                     ex.data.possibleAnswersDropDown = ex.createDropdown(dropdownX, dropdownY,"Choose one",{
                                                                 color: "white",
-                                                                elements: {yes: undefined,
-                                                                           no: undefined}
+                                                                elements: {yes: function(){subquestion.selectedAnswer = true;},
+                                                                           no: function(){subquestion.selectedAnswer = false;}}
                                                             });
                     break;
                 default:
@@ -483,9 +502,9 @@ var main = function(ex) {
         };
 
         subquestion.removeAllFromPar = function(){
-        	for (var i = 0; i < ex.data.par.length; i++){
-        		ex.data.par[i].remove();
-        	}        	
+            for (var i = 0; i < ex.data.par.length; i++){
+                ex.data.par[i].remove();
+            }           
         }
 
         subquestion.checkAnswer = function(){
@@ -493,6 +512,7 @@ var main = function(ex) {
                 case "initial": 
                     if (subquestion.answer === subquestion.selectedAnswer){
                         if (ex.data.par != undefined){
+
                         	// remove previous text
                         	subquestion.removeAllFromPar();
                         	// remove dropdown
@@ -503,7 +523,30 @@ var main = function(ex) {
                         	flow.getCurrentQuestion().numberLine.setTargetRange(true);
                         	flow.getCurrentQuestion().numberLine.setShowX(true);
                         	flow.getCurrentQuestion().numberLine.setShowY(true);
+
                         }
+                        return true;
+                    } else {
+                        ex.alert("That's incorrect.", {color:"red"})
+                        return false;
+                    }
+                    break;
+                case "jump":
+                    if(flow.getCurrentQuestion().numberLine.checkAnswer() === true){
+                        //remove previous text
+                        subquestion.removeAllFromPar();
+                        return true;
+                    } else {
+                        ex.alert("That's incorrect.", {color:"red"})
+                        return false;
+                    };
+                    break;
+                case "reached":
+                    if(subquestion.answer === subquestion.selectedAnswer){
+                        //remove previous text
+                        subquestion.removeAllFromPar();
+                        //remove dropdown
+                        ex.data.possibleAnswersDropDown.remove();
                         return true;
                     } else {
                         ex.alert("That's incorrect.", {color:"red"})
@@ -521,9 +564,9 @@ var main = function(ex) {
 
     // disable things
     ex.chromeElements.undoButton.disable();
-	ex.chromeElements.redoButton.disable();
+    ex.chromeElements.redoButton.disable();
 
-	// start!
+    // start!
     flow = Flow();
     flow.init();
 
