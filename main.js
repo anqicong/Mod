@@ -356,9 +356,9 @@ var main = function(ex) {
         subquestion.y = undefined;
         subquestion.answer = undefined;
         subquestion.textLines = [];
-        subquestion.possibleAnswersDropDown = undefined;
         subquestion.selectedAnswer = "";
         subquestion.shuffledOptions = undefined;
+        ex.data.possibleAnswersDropDown = undefined;
 
         subquestion.makeSelection = function(i){
             return function(){subquestion.selectedAnswer = subquestion.shuffledOptions[i]; };
@@ -392,7 +392,7 @@ var main = function(ex) {
                     for (var i = 0; i < subquestion.shuffledOptions.length; i++){
                         elements[subquestion.shuffledOptions[i]] = subquestion.makeSelection(i);
                     }
-                    subquestion.possibleAnswersDropDown = ex.createDropdown(dropdownX, dropdownY,"Choose one",{
+                    ex.data.possibleAnswersDropDown = ex.createDropdown(dropdownX, dropdownY,"Choose one",{
                                                                 color: "white",
                                                                 elements: elements
                                                             });
@@ -417,7 +417,7 @@ var main = function(ex) {
                     // dropdown for reached
                     var dropdownX = 440;
                     var dropdownY = 280;
-                    subquestion.possibleAnswersDropDown = ex.createDropdown(dropdownX, dropdownY,"Choose one",{
+                    ex.data.possibleAnswersDropDown = ex.createDropdown(dropdownX, dropdownY,"Choose one",{
                                                                 color: "white",
                                                                 elements: {yes: undefined,
                                                                            no: undefined}
@@ -440,15 +440,22 @@ var main = function(ex) {
             }
         };
 
+        subquestion.removeAllFromPar = function(){
+        	for (var i = 0; i < ex.data.par.length; i++){
+        		ex.data.par[i].remove();
+        	}        	
+        }
+
         subquestion.checkAnswer = function(){
             switch (subquestion.type){
                 case "initial": 
                     if (subquestion.answer === subquestion.selectedAnswer){
                         alert("correct");
                         if (ex.data.par != undefined){
-                        	for (var i = 0; i < ex.data.par.length; i++){
-                        		ex.data.par[i].remove();
-                        	}
+                        	// remove previous text
+                        	subquestion.removeAllFromPar();
+                        	// remove dropdown
+                        	ex.data.possibleAnswersDropDown.remove();
                         }
                         return true;
                     } else {
