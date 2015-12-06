@@ -633,6 +633,23 @@ var main = function(ex) {
     // disable things
     ex.chromeElements.undoButton.disable();
     ex.chromeElements.redoButton.disable();
+    ex.chromeElements.displayCAButton.disable();
+
+    // make reset button
+    function doReset(){
+    	// undraw things
+    	flow.getCurrentQuestion().getCurrentSubquestion().removeAllFromPar();
+		for (var i = 0; i < flow.getCurrentQuestion().numberLine.numButtonList.length; i++) {
+        	flow.getCurrentQuestion().numberLine.numButtonList[i].remove();
+    	}
+    	ex.data.questionNumText.remove();
+        if (ex.data.targetRangeText != undefined) ex.data.targetRangeText.remove();
+        if (ex.data.possibleAnswersDropDown != undefined) ex.data.possibleAnswersDropDown.remove();
+    	flow = Flow();
+    	flow.init();
+    }
+
+	ex.chromeElements.resetButton.on("click", function () {doReset(true)});
 
     // start!
     flow = Flow();
