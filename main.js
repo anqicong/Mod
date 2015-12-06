@@ -398,7 +398,7 @@ var main = function(ex) {
                                                             });
                     break;
                 case ("jump"):
-                    subquestion.textLines.push("Let's calculate x%" + subquestion.y.toString());
+                    subquestion.textLines.push("Let's calculate " + subquestion.x.toString() + "%" + subquestion.y.toString());
                     subquestion.textLines.push("We calculate " + subquestion.x.toString() + "%" 
                                                 + subquestion.y.toString() + 
                     " by adding " + (subquestion.y * -1).toString());
@@ -433,10 +433,10 @@ var main = function(ex) {
             var textStartX = 30;
             var textStartY = 205;
             var spacing = 35;
-            ex.data.par;
+            ex.data.par = [];
             for (var i = 0; i < subquestion.textLines.length; i++){
-                ex.data.par = ex.createParagraph(textStartX, textStartY + i*spacing, subquestion.textLines[i],
-                                        {size: "xlarge"});
+                ex.data.par.push(ex.createParagraph(textStartX, textStartY + i*spacing, subquestion.textLines[i],
+                                        {size: "xlarge"}));
             }
         };
 
@@ -445,7 +445,11 @@ var main = function(ex) {
                 case "initial": 
                     if (subquestion.answer === subquestion.selectedAnswer){
                         alert("correct");
-                        if (ex.data.par != undefined) ex.data.par.remove();
+                        if (ex.data.par != undefined){
+                        	for (var i = 0; i < ex.data.par.length; i++){
+                        		ex.data.par[i].remove();
+                        	}
+                        }
                         return true;
                     } else {
                         alert("incorrect!");
