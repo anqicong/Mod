@@ -297,10 +297,16 @@ var main = function(ex) {
         };
 
         numberLine.drawCurve = function(from, to){
+            var headlen = 15;
+            var angle = Math.atan2(to.y - (from.y - 50), to.x - ((from.x + to.x)/2));
             ex.graphics.ctx.strokeStyle = "#000000";
             ex.graphics.ctx.beginPath();
             ex.graphics.ctx.moveTo(from.x,from.y);
             ex.graphics.ctx.quadraticCurveTo((from.x + to.x)/2, from.y - 50, to.x, to.y);
+            ex.graphics.ctx.lineTo(to.x-headlen*Math.cos(angle-Math.PI/6),to.y-headlen*Math.sin(angle-Math.PI/6));
+            ex.graphics.ctx.moveTo(to.x, to.y);
+            ex.graphics.ctx.lineTo(to.x-headlen*Math.cos(angle+Math.PI/6),to.y-headlen*Math.sin(angle+Math.PI/6));
+
             ex.graphics.ctx.stroke();
             //todo
         };
