@@ -639,6 +639,7 @@ var main = function(ex) {
     	ex.data.questionNumText.remove();
         if (ex.data.targetRangeText != undefined) ex.data.targetRangeText.remove();
         if (ex.data.possibleAnswersDropDown != undefined) ex.data.possibleAnswersDropDown.remove();
+        // make a new thing
     	flow = Flow();
     	flow.init();
     }
