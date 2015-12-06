@@ -371,7 +371,7 @@ var main = function(ex) {
                     subquestion.textLines.push("Let's calculate x%" + subquestion.y.toString());
                     subquestion.textLines.push("What are the possible answers?");
                     var dropdownX = 440;
-                    var dropdownY = 240;
+                    var dropdownY = 220;
                     // create options for the dropdown as strings
                     var options = [];
                     if (subquestion.y > 0){
@@ -453,7 +453,6 @@ var main = function(ex) {
             switch (subquestion.type){
                 case "initial": 
                     if (subquestion.answer === subquestion.selectedAnswer){
-                        alert("correct");
                         if (ex.data.par != undefined){
                         	// remove previous text
                         	subquestion.removeAllFromPar();
@@ -464,7 +463,7 @@ var main = function(ex) {
                         }
                         return true;
                     } else {
-                        alert("incorrect!");
+                        ex.alert("That's incorrect.", {color:"red"})
                         return false;
                     }
                     break;
