@@ -279,7 +279,6 @@ var main = function(ex) {
         };
 
         numberLine.setTargetRange = function(on){
-        	console.log("target range");
             numberLine.showTargetRange = on;
             // set the target range variables
     		if (numberLine.y > 0){
@@ -551,6 +550,9 @@ var main = function(ex) {
                     if(flow.getCurrentQuestion().numberLine.checkAnswer() === true){
                         //remove previous text
                         subquestion.removeAllFromPar();
+                        // remove question num and target range text
+                        ex.data.questionNumText.remove();
+                        ex.data.targetRangeText.remove();
                         return true;
                     } else {
                         ex.alert("That's incorrect.", {color:"red"})
