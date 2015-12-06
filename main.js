@@ -264,19 +264,19 @@ var main = function(ex) {
             // generate x and y
             switch (question.questionNum){
                 case 0: // both numbers are positive
-                    question.y = getRandomInt(1, 8);
-                    question.x = getRandomInt(question.y + 1, 10);
+                    question.y = getRandomInt(1, 7);
+                    question.x = getRandomInt(question.y + 1, 9);
                     break;
                 case 1: // one number is positive and one is negative
                     // randomly pick either x or y to be negative
                     var xIsNegative = Math.random();
                     if (xIsNegative < .5){
-                        question.x = 0 - getRandomInt(1, 10);
-                        question.y = getRandomInt(1, 10);
+                        question.x = 0 - getRandomInt(1, 9);
+                        question.y = getRandomInt(1, 9);
                     }
                     else{
-                        question.x = getRandomInt(1, 10);
-                        question.y = 0 - getRandomInt(1, 10);
+                        question.x = getRandomInt(1, 9);
+                        question.y = 0 - getRandomInt(1, 9);
                     }
                     break;
                 default:
@@ -333,7 +333,8 @@ var main = function(ex) {
         question.draw = function(){
             ex.graphics.ctx.clearRect(0,0,ex.width(),ex.height());
             // draw the question number
-            ex.createParagraph(10, 10, "Question "+ (question.questionNum+1).toString(), {size:"xlarge"});
+            ex.data.questionNumText = ex.createParagraph(10, 10, 
+            	"Question "+ (question.questionNum+1).toString(), {size:"xlarge"});
             // draw its child things
             question.getCurrentSubquestion().draw();
             question.numberLine.draw();
@@ -402,16 +403,18 @@ var main = function(ex) {
                     subquestion.textLines.push("We calculate " + subquestion.x.toString() + "%" 
                                                 + subquestion.y.toString() + 
                     " by adding " + (subquestion.y * -1).toString());
-                    subquestion.textLines.push("        until we reach the target range.");
+                    subquestion.textLines.push("to " + subquestion.x.toString() + " until we reach the");
+                    subquestion.textLines.push("target range.");
+                    subquestion.textLines.push("");
                     subquestion.textLines.push("Click where we jump to next.");
-                    break;
+                    break;	
                 case ("reached"):
-                    subquestion.textLines.push("Let's calculate x%" + subquestion.y.toString());  
+                    subquestion.textLines.push("Let's calculate " + subquestion.x.toString() + "%" + subquestion.y.toString());
                     subquestion.textLines.push("We calculate " + subquestion.x.toString() + "%" 
                                                 + subquestion.y.toString() + 
                     " by adding " + (subquestion.y * -1).toString());
-                    subquestion.textLines.push("        until we reach the target range.");
-                    subquestion.textLines.push("Click where we jump to next.");
+                    subquestion.textLines.push("to " + subquestion.x.toString() + " until we reach the");
+                    subquestion.textLines.push("target range.");
                     subquestion.textLines.push("");
                     subquestion.textLines.push("Have we reached the answer?");
                     // dropdown for reached
@@ -431,7 +434,7 @@ var main = function(ex) {
 
         subquestion.draw = function(){
             var textStartX = 30;
-            var textStartY = 205;
+            var textStartY = 185;
             var spacing = 35;
             ex.data.par = [];
             for (var i = 0; i < subquestion.textLines.length; i++){
@@ -456,6 +459,8 @@ var main = function(ex) {
                         	subquestion.removeAllFromPar();
                         	// remove dropdown
                         	ex.data.possibleAnswersDropDown.remove();
+                        	// remove question num
+                        	ex.data.questionNumText.remove();
                         }
                         return true;
                     } else {
