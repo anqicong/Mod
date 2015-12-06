@@ -180,7 +180,7 @@ var main = function(ex) {
 
         numberLine.checkAnswer = function(){
             if(numberLine.selectedAnswer === numberLine.nextPoint){
-                numberLine.drawArrow(numberLine.numButtonList[numberLine.curPoint+10].position(),
+                numberLine.drawCurve(numberLine.numButtonList[numberLine.curPoint+10].position(),
                     numberLine.numButtonList[numberLine.nextPoint+10].position());
                 numberLine.curPoint = numberLine.nextPoint;
                 numberLine.nextPoint = numberLine.curPoint - numberLine.y;
@@ -264,13 +264,13 @@ var main = function(ex) {
             numberLine.nextPoint = newNextPoint;
         };
 
-        numberLine.drawArrow = function(from, to){
+        numberLine.drawCurve = function(from, to){
             console.log("HEY I'M MAKING ARROWS WOOOOOOOOOOO");
             console.log(from);
             console.log(to);
             console.log((from.x+to.x)/2);
             height = 20
-            ex.graphics.ctx.fillStyle = "#000000";
+            ex.graphics.ctx.strokeStyle = "#000000";
             ex.graphics.ctx.beginPath();
             ex.graphics.ctx.moveTo(from.x + 14,from.y-10);
             ex.graphics.ctx.quadraticCurveTo((from.x + to.x + 28)/2, from.y - 50, to.x+14, to.y-10);
