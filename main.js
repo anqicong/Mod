@@ -389,7 +389,10 @@ var main = function(ex) {
                     console.log("correct!");
                     question.currSubquestion += 1;
                     question.getCurrentSubquestion().init();
-                    question.getCurrentSubquestion().draw();
+                    for (var i = 0; i < question.numberLine.numButtonList.length; i++) {
+                        question.numberLine.numButtonList[i].remove();
+                    };
+                    flow.draw();
                 } else {
                     console.log("incorrect");
                 };
