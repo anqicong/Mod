@@ -269,7 +269,6 @@ var main = function(ex) {
             console.log(from);
             console.log(to);
             console.log((from.x+to.x)/2);
-            height = 20
             ex.graphics.ctx.strokeStyle = "#000000";
             ex.graphics.ctx.beginPath();
             ex.graphics.ctx.moveTo(from.x + 14,from.y-10);
@@ -381,12 +380,27 @@ var main = function(ex) {
                 var correct = question.getCurrentSubquestion().checkAnswer();
                 if(correct){
                     console.log("correct!");
-                    question.currSubquestion += 1;
-                    question.getCurrentSubquestion().init();
-                    for (var i = 0; i < question.numberLine.numButtonList.length; i++) {
-                        question.numberLine.numButtonList[i].remove();
-                    };
-                    flow.draw();
+                    if (question.currSubquestion < question.subquestions.length - 1){ // still have more subquestions to go!
+	                    question.currSubquestion += 1;
+	                    question.getCurrentSubquestion().init();
+	                    for (var i = 0; i < question.numberLine.numButtonList.length; i++) {
+	                        question.numberLine.numButtonList[i].remove();
+	                    }
+	                    flow.draw();
+	                }
+	                else if (question.currSubquestion == question.subquestions.length - 1){ // no more subquestions, but are there more questions?
+	                	if (question.questionNum < flow.numQuestions - 1){
+	                		flow.currQuestionNum += 1;
+	                		flow.getCurrentQuestion().init();
+	                		for (var i = 0; i < question.numberLine.numButtonList.length; i++) {
+	                        	question.numberLine.numButtonList[i].remove();
+	                    	}
+	                    	flow.draw();
+	                	}
+	                	else{ // no more subquestions or questions
+	                		ex.alert("You have completed the exercise. Please click Submit.", {color: "blue", stay: true});
+	                	}
+	                }
                 } else {
                     console.log("incorrect");
                 };
