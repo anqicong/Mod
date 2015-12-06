@@ -558,7 +558,7 @@ var main = function(ex) {
             	}
             	else{
             		// TODO: not sure if coords are correct since we can't test it yet
-            		ex.data.targetRangeText = ex.createParagraph(280,140,"right aligned",{size:"large"});
+            		ex.data.targetRangeText = ex.createParagraph(280,140,"target range",{size:"large"});
             	}
             }
         };
