@@ -295,23 +295,23 @@ var main = function(ex) {
             question.subquestions.push(initialQuestion);
             // create jump and reached questions
             var numJumpReachedQuestions = getNumTimesToIterateSubquestion(question.x, question.y);
-            // jump question
-            var jumpQuestion = SubQuestion("jump");
-            jumpQuestion.x = question.x;
-            jumpQuestion.y = question.y;
-            jumpQuestion.answer = question.x - question.y;
-            question.subquestions.push(jumpQuestion);
-            // reached question
-            var reachedQuestion = SubQuestion("reached");
-            reachedQuestion.x = question.x;
-            reachedQuestion.y = question.y;
-            reachedQuestion.answer = true;
-            question.subquestions.push(reachedQuestion);
+            for (var i = 0; i < numJumpReachedQuestions; i++){
+            	// jump question
+	            var jumpQuestion = SubQuestion("jump");
+	            jumpQuestion.x = question.x;
+	            jumpQuestion.y = question.y;
+	            jumpQuestion.answer = question.x - question.y;
+	            question.subquestions.push(jumpQuestion);
+	            // reached question
+	            var reachedQuestion = SubQuestion("reached");
+	            reachedQuestion.x = question.x;
+	            reachedQuestion.y = question.y;
+	            reachedQuestion.answer = true;
+	            question.subquestions.push(reachedQuestion);
+            }
 
             // init current question
             question.getCurrentSubquestion().init();
-
-            
 
             console.log(question.x);
             console.log(question.y);
@@ -476,7 +476,11 @@ var main = function(ex) {
         return subquestion;
     }
 
+    // disable things
+    ex.chromeElements.undoButton.disable();
+	ex.chromeElements.redoButton.disable();
 
+	// start!
     flow = Flow();
     flow.init();
 
