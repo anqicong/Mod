@@ -112,7 +112,7 @@ var main = function(ex) {
 
     function Flow(){
         var flow = {};
-        flow.numQuestions = 2;
+        flow.numQuestions = 3;
         flow.currQuestionNum = 0;
         flow.questions = [];
 
@@ -318,20 +318,16 @@ var main = function(ex) {
             // generate x and y
             switch (question.questionNum){
                 case 0: // both numbers are positive
-                    question.y = getRandomInt(1, 7);
+                    question.y = getRandomInt(2, 6);
                     question.x = getRandomInt(question.y + 1, 9);
                     break;
-                case 1: // one number is positive and one is negative
-                    // randomly pick either x or y to be negative
-                    var xIsNegative = Math.random();
-                    if (xIsNegative < .5){
-                        question.x = 0 - getRandomInt(1, 9);
-                        question.y = getRandomInt(1, 9);
-                    }
-                    else{
-                        question.x = getRandomInt(1, 9);
-                        question.y = 0 - getRandomInt(1, 9);
-                    }
+                case 1: // x is negative
+                    question.x = 0 - getRandomInt(1, 9);
+                    question.y = getRandomInt(2, 9);
+                    break;
+                case 2: // y is negative
+                	question.x = getRandomInt(1, 9);
+                    question.y = 0 - getRandomInt(2, 9);
                     break;
                 default:
                     break;
@@ -442,7 +438,22 @@ var main = function(ex) {
             return function(){subquestion.selectedAnswer = subquestion.shuffledOptions[i]; };
         };
         subquestion.init = function(){
-            //subquestion.nextButton = ex.createButton(ex.width(), ex.height(), "next", function(){alert("stuff")});
+        	// what number should we add to get to the target range?
+        	// it's different depending on whether x/y are positive/negative
+        	var yForString = undefined;
+        	if (subquestion.x > 0 && subquestion.y > 0){
+        		yForString = subquestion.y*-1;
+        	}
+        	else if (subquestion.x > 0 && subquestion.y < 0){
+        		yForString = subquestion.y;
+        	}
+        	else if (subquestion.x < 0 && subquestion.y > 0){
+        		yForString = subquestion.y;
+        	}
+        	else{
+        		yForString = subquestion.y*-1;
+        	}
+        	// init stuff based on question type
             switch (subquestion.type){
                 case ("initial"):
                     subquestion.textLines.push("Let's calculate x%" + subquestion.y.toString());
@@ -479,7 +490,7 @@ var main = function(ex) {
                     subquestion.textLines.push("Let's calculate " + subquestion.x.toString() + "%" + subquestion.y.toString());
                     subquestion.textLines.push("We calculate " + subquestion.x.toString() + "%" 
                                                 + subquestion.y.toString() + 
-                    " by adding " + (subquestion.y * -1).toString());
+                    " by adding " + yForString.toString());
                     subquestion.textLines.push("to " + subquestion.x.toString() + " until we reach the");
                     subquestion.textLines.push("target range.");
                     subquestion.textLines.push("");
@@ -489,7 +500,7 @@ var main = function(ex) {
                     subquestion.textLines.push("Let's calculate " + subquestion.x.toString() + "%" + subquestion.y.toString());
                     subquestion.textLines.push("We calculate " + subquestion.x.toString() + "%" 
                                                 + subquestion.y.toString() + 
-                    " by adding " + (subquestion.y * -1).toString());
+                    " by adding " + yForString.toString());
                     subquestion.textLines.push("to " + subquestion.x.toString() + " until we reach the");
                     subquestion.textLines.push("target range.");
                     subquestion.textLines.push("");
@@ -534,7 +545,7 @@ var main = function(ex) {
             for (var i = 0; i < ex.data.par.length; i++){
                 ex.data.par[i].remove();
             }           
-        }
+        };
 
         subquestion.checkAnswer = function(){
             switch (subquestion.type){
@@ -592,7 +603,7 @@ var main = function(ex) {
                     return false;
                     break;
             }
-        }
+        };
 
         return subquestion;
     }
