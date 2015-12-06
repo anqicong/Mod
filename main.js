@@ -106,6 +106,23 @@ var main = function(ex) {
       return array;
     }
 
+    // both to get the right number when writing "we get the answer by adding y"
+    // and to set nextPoint correctly
+    function getYToAdd(x, y){
+	    if (x > 0 && y > 0){
+    		return y*-1;
+    	}
+    	else if (x > 0 && y < 0){
+    		return y;
+    	}
+    	else if (x < 0 && y > 0){
+    		return y;
+    	}
+    	else{
+    		return y*-1;
+    	}
+    }
+
     /*****************************************************************
      * Flow
      ****************************************************************/
@@ -182,6 +199,8 @@ var main = function(ex) {
         };
 
         numberLine.checkAnswer = function(){
+        	console.log("!");
+        	console.log(numberLine.nextPoint);
             if(numberLine.selectedAnswer === numberLine.nextPoint){
                 numberLine.jumps.push({from: numberLine.pointList[numberLine.curPoint + 10],
                                          to: numberLine.pointList[numberLine.nextPoint + 10]});
@@ -189,7 +208,7 @@ var main = function(ex) {
                 console.log("NextPoint = " + numberLine.nextPoint);
 
                 numberLine.curPoint = numberLine.nextPoint;
-                numberLine.nextPoint = numberLine.curPoint - numberLine.y;
+                numberLine.nextPoint = numberLine.curPoint + getYToAdd(numberLine.x, numberLine.y);
                 return true;
             }
         };
@@ -346,7 +365,7 @@ var main = function(ex) {
             question.numberLine.setX(question.x);
             question.numberLine.setY(question.y);
             question.numberLine.setCurPoint(question.x);
-            question.numberLine.setNextPoint(question.x - question.y);
+            question.numberLine.setNextPoint(question.x + getYToAdd(question.x, question.y));
 
             // create subquestions
             // initial question
@@ -449,19 +468,7 @@ var main = function(ex) {
         subquestion.init = function(){
         	// what number should we add to get to the target range?
         	// it's different depending on whether x/y are positive/negative
-        	var yForString = undefined;
-        	if (subquestion.x > 0 && subquestion.y > 0){
-        		yForString = subquestion.y*-1;
-        	}
-        	else if (subquestion.x > 0 && subquestion.y < 0){
-        		yForString = subquestion.y;
-        	}
-        	else if (subquestion.x < 0 && subquestion.y > 0){
-        		yForString = subquestion.y;
-        	}
-        	else{
-        		yForString = subquestion.y*-1;
-        	}
+        	var yToAdd = getYToAdd(subquestion.x, subquestion.y);
         	// init stuff based on question type
             switch (subquestion.type){
                 case ("initial"):
@@ -499,7 +506,7 @@ var main = function(ex) {
                     subquestion.textLines.push("Let's calculate " + subquestion.x.toString() + "%" + subquestion.y.toString());
                     subquestion.textLines.push("We calculate " + subquestion.x.toString() + "%" 
                                                 + subquestion.y.toString() + 
-                    " by adding " + yForString.toString());
+                    " by adding " + yToAdd.toString());
                     subquestion.textLines.push("to " + subquestion.x.toString() + " until we reach the");
                     subquestion.textLines.push("target range.");
                     subquestion.textLines.push("");
@@ -509,7 +516,7 @@ var main = function(ex) {
                     subquestion.textLines.push("Let's calculate " + subquestion.x.toString() + "%" + subquestion.y.toString());
                     subquestion.textLines.push("We calculate " + subquestion.x.toString() + "%" 
                                                 + subquestion.y.toString() + 
-                    " by adding " + yForString.toString());
+                    " by adding " + yToAdd.toString());
                     subquestion.textLines.push("to " + subquestion.x.toString() + " until we reach the");
                     subquestion.textLines.push("target range.");
                     subquestion.textLines.push("");
