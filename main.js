@@ -155,7 +155,9 @@ var main = function(ex) {
         numberLine.showY = true;
         numberLine.minNum = -10;
         numberLine.maxNum = 10;
+        numberLine.jumps = [];
         numberLine.numButtonList = [];
+        numberLine.pointList = [];
         numberLine.targetRangeMin = undefined;
         numberLine.targetRangeMax = undefined;
 
@@ -168,20 +170,24 @@ var main = function(ex) {
         var a = {x1 : l.x1, y1 : l.y1, x2 : l.x1 + size, y2 : l.y1 - size};
         a.size = size;
 
+        //keep track of the positions of all the points
+        for (var i = 0; i <= 20; i++) {
+            numberLine.pointList.push({x: p.x + i*p.offset, y: p.y});
+        };
+
         function check(i){ 
             return function(){
                 numberLine.selectedAnswer = i;
-                if (i == numberLine.curPoint - numberLine.y) {
-                    //numberLine.curPoint = numberLine.curPoint - numberLine.y;
-                    return true;
-                }
             } 
         };
 
         numberLine.checkAnswer = function(){
             if(numberLine.selectedAnswer === numberLine.nextPoint){
-                numberLine.drawCurve(numberLine.numButtonList[numberLine.curPoint+10].position(),
-                    numberLine.numButtonList[numberLine.nextPoint+10].position());
+                numberLine.jumps.push({from: numberLine.pointList[numberLine.curPoint + 10],
+                                         to: numberLine.pointList[numberLine.nextPoint + 10]});
+                console.log("CurPoint = " + numberLine.curPoint);
+                console.log("NextPoint = " + numberLine.nextPoint);
+
                 numberLine.curPoint = numberLine.nextPoint;
                 numberLine.nextPoint = numberLine.curPoint - numberLine.y;
                 return true;
@@ -241,10 +247,17 @@ var main = function(ex) {
                 }
             }
 
+            function drawCurves(){
+                for (var i = 0; i < numberLine.jumps.length; i++) {
+                    numberLine.drawCurve(numberLine.jumps[i].from, numberLine.jumps[i].to);
+                };
+            }
+
             drawLine();
             drawPoints();
             drawArrows();
             drawNumbers();
+            drawCurves();
 
         };
 
@@ -265,14 +278,10 @@ var main = function(ex) {
         };
 
         numberLine.drawCurve = function(from, to){
-            console.log("HEY I'M MAKING ARROWS WOOOOOOOOOOO");
-            console.log(from);
-            console.log(to);
-            console.log((from.x+to.x)/2);
             ex.graphics.ctx.strokeStyle = "#000000";
             ex.graphics.ctx.beginPath();
-            ex.graphics.ctx.moveTo(from.x + 14,from.y-10);
-            ex.graphics.ctx.quadraticCurveTo((from.x + to.x + 28)/2, from.y - 50, to.x+14, to.y-10);
+            ex.graphics.ctx.moveTo(from.x,from.y);
+            ex.graphics.ctx.quadraticCurveTo((from.x + to.x)/2, from.y - 50, to.x, to.y);
             ex.graphics.ctx.stroke();
             //todo
         };
