@@ -480,6 +480,16 @@ var main = function(ex) {
                 ex.data.par.push(ex.createParagraph(textStartX, textStartY + i*spacing, subquestion.textLines[i],
                                         {size: "xlarge"}));
             }
+            // write the text target range
+            if (subquestion.type != "initial"){
+            	if (subquestion.y > 0){
+            		ex.data.targetRangeText = ex.createParagraph(380,140,"target range",{size:"large"});
+            	}
+            	else{
+            		// TODO: not sure if coords are correct since we can't test it yet
+            		ex.data.targetRangeText = ex.createParagraph(280,140,"right aligned",{size:"large"});
+            	}
+            }
         };
 
         subquestion.removeAllFromPar = function(){
@@ -510,6 +520,10 @@ var main = function(ex) {
                         return false;
                     }
                     break;
+                case "jump":
+                	break;
+               	case "reached":
+               		break;
                 default:
                     return false;
                     break;
