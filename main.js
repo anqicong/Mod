@@ -482,7 +482,7 @@ var main = function(ex) {
                     subquestion.textLines.push("Have we reached the answer?");
                     // dropdown for reached
                     var dropdownX = 440;
-                    var dropdownY = 280;
+                    var dropdownY = 360;
                     ex.data.possibleAnswersDropDown = ex.createDropdown(dropdownX, dropdownY,"Choose one",{
                                                                 color: "white",
                                                                 elements: {yes: function(){subquestion.selectedAnswer = true;},
@@ -563,6 +563,9 @@ var main = function(ex) {
                     if(subquestion.answer === subquestion.selectedAnswer){
                         //remove previous text
                         subquestion.removeAllFromPar();
+                        // remove question num and target range text
+                        ex.data.questionNumText.remove();
+                        ex.data.targetRangeText.remove();
                         //remove dropdown
                         ex.data.possibleAnswersDropDown.remove();
                         return true;
