@@ -485,8 +485,8 @@ var main = function(ex) {
                     var dropdownY = 360;
                     ex.data.possibleAnswersDropDown = ex.createDropdown(dropdownX, dropdownY,"Choose one",{
                                                                 color: "white",
-                                                                elements: {yes: function(){subquestion.selectedAnswer = true;},
-                                                                           no: function(){subquestion.selectedAnswer = false;}}
+                                                                elements: {Yes: function(){subquestion.selectedAnswer = true;},
+                                                                           No: function(){subquestion.selectedAnswer = false;}}
                                                             });
                     break;
                 default:
