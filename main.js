@@ -172,7 +172,7 @@ var main = function(ex) {
             return function(){
                 numberLine.selectedAnswer = i;
                 if (i == numberLine.curPoint - numberLine.y) {
-                    numberLine.curPoint = numberLine.curPoint - numberLine.y;
+                    //numberLine.curPoint = numberLine.curPoint - numberLine.y;
                     return true;
                 }
             } 
@@ -180,8 +180,8 @@ var main = function(ex) {
 
         numberLine.checkAnswer = function(){
             if(numberLine.selectedAnswer === numberLine.nextPoint){
-                numberLine.drawArrow(numberLine.numButtonList[numberLine.curPoint].position(),
-                    numberLine.numButtonList[numberLine.nextPoint].position());
+                numberLine.drawArrow(numberLine.numButtonList[numberLine.numButtonList.length - numberLine.curPoint].position(),
+                    numberLine.numButtonList[numberLine.numButtonList.length-numberLine.nextPoint].position());
                 numberLine.curPoint = numberLine.nextPoint;
                 numberLine.nextPoint = numberLine.curPoint - numberLine.y;
                 return true;
@@ -271,10 +271,14 @@ var main = function(ex) {
         };
 
         numberLine.drawArrow = function(from, to){
+            console.log("HEY I'M MAKING ARROWS WOOOOOOOOOOO");
+            console.log(from);
+            console.log(to);
+            console.log((from.x+to.x)/2);
             height = 20
             ex.graphics.ctx.beginPath();
             ex.graphics.ctx.moveTo(from.x,from.y);
-            ex.graphics.ctx.quadraticCurveTo((from.x + to.x)/2, from.y + 20, to.x, to.y);
+            ex.graphics.ctx.quadraticCurveTo((from.x + to.x)/2, from.y - 20, to.x, to.y);
             ex.graphics.ctx.stroke();
             //todo
         };
@@ -353,7 +357,7 @@ var main = function(ex) {
             question.subquestions.push(initialQuestion);
             // create jump and reached questions
             var numJumpReachedQuestions = getNumTimesToIterateSubquestion(question.x, question.y);
-            for (var i = 0; i < numJumpReachedQuestions; i++){
+            for (var i = 0; i < numJumpReachedQuestions + 1; i++){
                 // jump question
                 var jumpQuestion = SubQuestion("jump");
                 jumpQuestion.x = question.x;
@@ -364,7 +368,11 @@ var main = function(ex) {
                 var reachedQuestion = SubQuestion("reached");
                 reachedQuestion.x = question.x;
                 reachedQuestion.y = question.y;
-                reachedQuestion.answer = true;
+                if (i === numJumpReachedQuestions) {
+                    reachedQuestion.answer = true;
+                } else {
+                    reachedQuestion.answer = false;
+                };
                 question.subquestions.push(reachedQuestion);
             }
 
