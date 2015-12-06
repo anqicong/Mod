@@ -149,9 +149,13 @@ var main = function(ex) {
         numberLine.y = undefined;
         numberLine.curPoint = undefined;
         numberLine.showTargetRange = false;
+        numberLine.showX = false;
+        numberLine.showY = true;
         numberLine.minNum = -10;
         numberLine.maxNum = 10;
         numberLine.numButtonList = [];
+        numberLine.targetRangeMin = undefined;
+        numberLine.targetRangeMax = undefined;
 
         // l is number line, p is points on line, a is arrows at either end
         var l = {x1 : 6, y1 : 90, x2 : ex.width() - 6, y2 : 90};
@@ -205,9 +209,27 @@ var main = function(ex) {
 
             function drawNumbers() {
                 for (var i = numberLine.minNum; i < numberLine.maxNum + 1; i++) {
+                	if (numberLine.showX && i == numberLine.x){ // color x
+                		var color = "orange";
+                	}
+                	else if (i == numberLine.curPoint 
+                			&& flow.getCurrentQuestion().getCurrentSubquestion().type
+                				 != "initial"){ // color curPoint only if not on initial question
+                		var color = "white";
+                	}
+                	else if (numberLine.showY && i == numberLine.y){  // color y
+                		var color = "lightBlue";
+                	}
+                	else if (numberLine.showTargetRange && i >= numberLine.targetRangeMin
+                				&& i <= numberLine.targetRangeMax){ // target range
+                		var color = "green"
+                	}
+                	else{ // default
+                		var color = "blue";
+                	}
                     numberLine.numButtonList.push(ex.createButton(
-                    p.x + p.offset * (i + numberLine.maxNum) - 14, p.y + 10, i.toString(), {
-                    color: "blue", size: "small" }).on("click", check(i)))
+	                    p.x + p.offset * (i + numberLine.maxNum) - 14, p.y + 10, i.toString(), {
+	                    color: color, size: "small" }).on("click", check(i)))
                 }
             }
 
@@ -240,14 +262,31 @@ var main = function(ex) {
         };
 
         numberLine.setTargetRange = function(on){
+        	console.log("target range");
             numberLine.showTargetRange = on;
+            // set the target range variables
+    		if (numberLine.y > 0){
+    			numberLine.targetRangeMin = 0;
+    			numberLine.targetRangeMax = numberLine.y - 1;
+    		}
+    		else{
+    			numberLine.targetRangeMin = numberLine.y + 1
+    			numberLine.targetRangeMax = 0;
+    		}
         };
+
+        numberLine.setShowX = function(on){
+        	numberLine.showX = on;
+        }
+
+        numberLine.setShowY = function(on){
+        	numberLine.showY = on;
+        }
 
         return numberLine;
     }
 
     /*****************************************************************
-
      * Question
      ****************************************************************/
 
@@ -460,6 +499,10 @@ var main = function(ex) {
                         	ex.data.possibleAnswersDropDown.remove();
                         	// remove question num
                         	ex.data.questionNumText.remove();
+                        	// start drawing target range, x, and y
+                        	flow.getCurrentQuestion().numberLine.setTargetRange(true);
+                        	flow.getCurrentQuestion().numberLine.setShowX(true);
+                        	flow.getCurrentQuestion().numberLine.setShowY(true);
                         }
                         return true;
                     } else {
