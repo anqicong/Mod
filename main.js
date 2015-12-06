@@ -222,14 +222,8 @@ var main = function(ex) {
 
             function drawNumbers() {
                 for (var i = numberLine.minNum; i < numberLine.maxNum + 1; i++) {
-
                 	if (numberLine.showX && i == numberLine.x){ // color x
                 		var color = "orange";
-                	}
-                	else if (i == numberLine.curPoint 
-                			&& flow.getCurrentQuestion().getCurrentSubquestion().type
-                				 != "initial"){ // color curPoint only if not on initial question
-                		var color = "white";
                 	}
                 	else if (numberLine.showY && i == numberLine.y){  // color y
                 		var color = "lightBlue";
