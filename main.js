@@ -511,9 +511,13 @@ var main = function(ex) {
                     break;
                 case ("jump"):
                     subquestion.textLines.push("Let's calculate " + subquestion.x.toString() + "%" + subquestion.y.toString());
-                    subquestion.textLines.push("We calculate " + subquestion.x.toString() + "%" 
+                    if (flow.currQuestionNum != 2) {subquestion.textLines.push("We calculate " + subquestion.x.toString() + "%" 
                                                 + subquestion.y.toString() + 
                     " by adding " + yToAdd.toString());
+                    } else {subquestion.textLines.push("We calculate " + subquestion.x.toString() + "%" 
+                                                + subquestion.y.toString() + 
+                    " by adding" + yToAdd.toString());
+                    }
                     subquestion.textLines.push("to " + subquestion.x.toString() + " until we reach the");
                     subquestion.textLines.push("target range.");
                     subquestion.textLines.push("");
@@ -521,9 +525,13 @@ var main = function(ex) {
                     break;  
                 case ("reached"):
                     subquestion.textLines.push("Let's calculate " + subquestion.x.toString() + "%" + subquestion.y.toString());
-                    subquestion.textLines.push("We calculate " + subquestion.x.toString() + "%" 
+                    if (flow.currQuestionNum != 2) {subquestion.textLines.push("We calculate " + subquestion.x.toString() + "%" 
                                                 + subquestion.y.toString() + 
                     " by adding " + yToAdd.toString());
+                    } else {subquestion.textLines.push("We calculate " + subquestion.x.toString() + "%" 
+                                                + subquestion.y.toString() + 
+                    " by adding" + yToAdd.toString());
+                    }
                     subquestion.textLines.push("to " + subquestion.x.toString() + " until we reach the");
                     subquestion.textLines.push("target range.");
                     subquestion.textLines.push("");
