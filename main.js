@@ -132,8 +132,11 @@ var main = function(ex) {
         flow.numQuestions = 3;
         flow.currQuestionNum = 0;
         flow.questions = [];
+        flow.score = undefined;
 
         flow.init = function(){
+        	// set score
+        	flow.score = 1.00;
             // create questions
             for (var i = 0; i < flow.numQuestions; i++){
                 flow.questions.push(Question(i));
@@ -199,8 +202,6 @@ var main = function(ex) {
         };
 
         numberLine.checkAnswer = function(){
-        	console.log("!");
-        	console.log(numberLine.nextPoint);
             if(numberLine.selectedAnswer === numberLine.nextPoint){
                 numberLine.jumps.push({from: numberLine.pointList[numberLine.curPoint + 10],
                                          to: numberLine.pointList[numberLine.nextPoint + 10]});
@@ -402,14 +403,9 @@ var main = function(ex) {
             // init current question
             question.getCurrentSubquestion().init();
 
-            console.log(question.x);
-            console.log(question.y);
-            console.log(question.subquestions);
-
-        question.nextButton = ex.createButton(ex.width()-75, ex.height()-50, "next", {color:"blue"}).on("click", function(){
+	        question.nextButton = ex.createButton(ex.width()-75, ex.height()-50, "next", {color:"blue"}).on("click", function(){
                 var correct = question.getCurrentSubquestion().checkAnswer();
                 if(correct){
-                    console.log("correct!");
                     if (question.currSubquestion < question.subquestions.length - 1){ // still have more subquestions to go!
 	                    question.currSubquestion += 1;
 	                    question.getCurrentSubquestion().init();
@@ -432,9 +428,11 @@ var main = function(ex) {
 	                	}
 	                }
                 } else {
-                    console.log("incorrect");
-                };
-            });
+                    // incorrect, decrement score
+                    flow.score -= 1/3/(question.subquestions.length+2); // there are 3 problems, with some number of subquestions each
+                }														// plus a bit for good measure and to be nice
+                console.log(flow.score);
+	        });
         };
 
         question.draw = function(){
@@ -498,7 +496,6 @@ var main = function(ex) {
                     }
                     subquestion.answer = options[0];
                     subquestion.shuffledOptions = shuffle(options); // shuffle the options
-                    console.log(subquestion.shuffledOptions);
                     var elements = {};
                     for (var i = 0; i < subquestion.shuffledOptions.length; i++){
                         elements[subquestion.shuffledOptions[i]] = subquestion.makeSelection(i);
@@ -651,6 +648,14 @@ var main = function(ex) {
     }
 
 	ex.chromeElements.resetButton.on("click", function () {doReset(true)});
+
+	// submit button
+	ex.chromeElements.submitButton.on("click", function() {
+		if (flow.score != undefined) {
+			var feedback = "Your score is " + flow.score.toString();
+			ex.setGrade(flow.score, feedback);
+		}
+	});
 
     // start!
     flow = Flow();
