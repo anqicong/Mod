@@ -311,8 +311,8 @@ var main = function(ex) {
             ex.graphics.ctx.lineTo(to.x-headlen*Math.cos(angle-Math.PI/6),to.y-headlen*Math.sin(angle-Math.PI/6));
             ex.graphics.ctx.moveTo(to.x, to.y);
             ex.graphics.ctx.lineTo(to.x-headlen*Math.cos(angle+Math.PI/6),to.y-headlen*Math.sin(angle+Math.PI/6));
-
             ex.graphics.ctx.stroke();
+
             //todo
         };
 
@@ -416,6 +416,7 @@ var main = function(ex) {
                         for (var i = 0; i < question.numberLine.numButtonList.length; i++) {
                             question.numberLine.numButtonList[i].remove();
                         }
+                        ex.graphics.ctx.clearRect(0,0,ex.width(),ex.height());
                         flow.draw();
                     }
                     else if (question.currSubquestion == question.subquestions.length - 1){ // no more subquestions, but are there more questions?
@@ -480,7 +481,7 @@ var main = function(ex) {
             // init stuff based on question type
             switch (subquestion.type){
                 case ("initial"):
-                    subquestion.textLines.push("Let's calculate x%" + subquestion.y.toString());
+                    subquestion.textLines.push("Let's calculate x%" + subquestion.y.toString() + ".");
                     subquestion.textLines.push("What are the possible answers?");
                     var dropdownX = 440;
                     var dropdownY = 220;
@@ -510,7 +511,7 @@ var main = function(ex) {
                                                             });
                     break;
                 case ("jump"):
-                    subquestion.textLines.push("Let's calculate " + subquestion.x.toString() + "%" + subquestion.y.toString());
+                    subquestion.textLines.push("Let's calculate " + subquestion.x.toString() + "%" + subquestion.y.toString() + ".");
                     if (flow.currQuestionNum != 2) {subquestion.textLines.push("We calculate " + subquestion.x.toString() + "%" 
                                                 + subquestion.y.toString() + 
                     " by adding " + yToAdd.toString());
@@ -524,7 +525,7 @@ var main = function(ex) {
                     subquestion.textLines.push("Click where we jump to next.");
                     break;  
                 case ("reached"):
-                    subquestion.textLines.push("Let's calculate " + subquestion.x.toString() + "%" + subquestion.y.toString());
+                    subquestion.textLines.push("Let's calculate " + subquestion.x.toString() + "%" + subquestion.y.toString() + ".");
                     if (flow.currQuestionNum != 2) {subquestion.textLines.push("We calculate " + subquestion.x.toString() + "%" 
                                                 + subquestion.y.toString() + 
                     " by adding " + yToAdd.toString());
