@@ -109,18 +109,18 @@ var main = function(ex) {
     // both to get the right number when writing "we get the answer by adding y"
     // and to set nextPoint correctly
     function getYToAdd(x, y){
-	    if (x > 0 && y > 0){
-    		return y*-1;
-    	}
-    	else if (x > 0 && y < 0){
-    		return y;
-    	}
-    	else if (x < 0 && y > 0){
-    		return y;
-    	}
-    	else{
-    		return y*-1;
-    	}
+        if (x > 0 && y > 0){
+            return y*-1;
+        }
+        else if (x > 0 && y < 0){
+            return y;
+        }
+        else if (x < 0 && y > 0){
+            return y;
+        }
+        else{
+            return y*-1;
+        }
     }
 
     /*****************************************************************
@@ -135,8 +135,8 @@ var main = function(ex) {
         flow.score = undefined;
 
         flow.init = function(){
-        	// set score
-        	flow.score = 1.00;
+            // set score
+            flow.score = 1.00;
             // create questions
             for (var i = 0; i < flow.numQuestions; i++){
                 flow.questions.push(Question(i));
@@ -232,7 +232,7 @@ var main = function(ex) {
                 }
             }
 
-            function drawArrows() {              
+            function drawArrows() {
                 for (var i = 0; i < 4; i++) {                
                     ex.graphics.ctx.moveTo(a.x1, a.y1);
                     ex.graphics.ctx.lineTo(a.x2, a.y2);
@@ -243,27 +243,31 @@ var main = function(ex) {
                         a.x1 = l.x2;
                         a.x2 = a.x1 - a.size;
                     }
+                    if (i == 3) {
+                        a.x1 = l.x1;
+                        a.x2 = a.x1 + a.size;
+                    }
                 }
             }
 
             function drawNumbers() {
                 for (var i = numberLine.minNum; i < numberLine.maxNum + 1; i++) {
-                	if (numberLine.showX && i == numberLine.x){ // color x
-                		var color = "orange";
-                	}
-                	else if (numberLine.showY && i == numberLine.y){  // color y
-                		var color = "lightBlue";
-                	}
-                	else if (numberLine.showTargetRange && i >= numberLine.targetRangeMin
-                				&& i <= numberLine.targetRangeMax){ // target range
-                		var color = "green"
-                	}
-                	else{ // default
-                		var color = "blue";
-                	}
+                    if (numberLine.showX && i == numberLine.x){ // color x
+                        var color = "orange";
+                    }
+                    else if (numberLine.showY && i == numberLine.y){  // color y
+                        var color = "lightBlue";
+                    }
+                    else if (numberLine.showTargetRange && i >= numberLine.targetRangeMin
+                                && i <= numberLine.targetRangeMax){ // target range
+                        var color = "green"
+                    }
+                    else{ // default
+                        var color = "blue";
+                    }
                     numberLine.numButtonList.push(ex.createButton(
-	                    p.x + p.offset * (i + numberLine.maxNum) - 14, p.y + 10, i.toString(), {
-	                    color: color, size: "small" }).on("click", check(i)))
+                        p.x + p.offset * (i + numberLine.maxNum) - 14, p.y + 10, i.toString(), {
+                        color: color, size: "small" }).on("click", check(i)))
                 }
             }
 
@@ -315,22 +319,22 @@ var main = function(ex) {
         numberLine.setTargetRange = function(on){
             numberLine.showTargetRange = on;
             // set the target range variables
-    		if (numberLine.y > 0){
-    			numberLine.targetRangeMin = 0;
-    			numberLine.targetRangeMax = numberLine.y - 1;
-    		}
-    		else{
-    			numberLine.targetRangeMin = numberLine.y + 1
-    			numberLine.targetRangeMax = 0;
-    		}
+            if (numberLine.y > 0){
+                numberLine.targetRangeMin = 0;
+                numberLine.targetRangeMax = numberLine.y - 1;
+            }
+            else{
+                numberLine.targetRangeMin = numberLine.y + 1
+                numberLine.targetRangeMax = 0;
+            }
         };
 
         numberLine.setShowX = function(on){
-        	numberLine.showX = on;
+            numberLine.showX = on;
         }
 
         numberLine.setShowY = function(on){
-        	numberLine.showY = on;
+            numberLine.showY = on;
         }
 
         return numberLine;
@@ -361,7 +365,7 @@ var main = function(ex) {
                     question.y = getRandomInt(2, 9);
                     break;
                 case 2: // y is negative
-                	question.x = getRandomInt(1, 9);
+                    question.x = getRandomInt(1, 9);
                     question.y = 0 - getRandomInt(2, 9);
                     break;
                 default:
@@ -403,36 +407,36 @@ var main = function(ex) {
             // init current question
             question.getCurrentSubquestion().init();
 
-	        question.nextButton = ex.createButton(ex.width()-75, ex.height()-50, "next", {color:"blue"}).on("click", function(){
+            question.nextButton = ex.createButton(ex.width()-75, ex.height()-50, "next", {color:"blue"}).on("click", function(){
                 var correct = question.getCurrentSubquestion().checkAnswer();
                 if(correct){
                     if (question.currSubquestion < question.subquestions.length - 1){ // still have more subquestions to go!
-	                    question.currSubquestion += 1;
-	                    question.getCurrentSubquestion().init();
-	                    for (var i = 0; i < question.numberLine.numButtonList.length; i++) {
-	                        question.numberLine.numButtonList[i].remove();
-	                    }
-	                    flow.draw();
-	                }
-	                else if (question.currSubquestion == question.subquestions.length - 1){ // no more subquestions, but are there more questions?
-	                	if (question.questionNum < flow.numQuestions - 1){
-	                		flow.currQuestionNum += 1;
-	                		flow.getCurrentQuestion().init();
-	                		for (var i = 0; i < question.numberLine.numButtonList.length; i++) {
-	                        	question.numberLine.numButtonList[i].remove();
-	                    	}
-	                    	flow.draw();
-	                	}
-	                	else{ // no more subquestions or questions
-	                		ex.alert("You have completed the exercise. Please click Submit.", {color: "blue", stay: true});
-	                	}
-	                }
+                        question.currSubquestion += 1;
+                        question.getCurrentSubquestion().init();
+                        for (var i = 0; i < question.numberLine.numButtonList.length; i++) {
+                            question.numberLine.numButtonList[i].remove();
+                        }
+                        flow.draw();
+                    }
+                    else if (question.currSubquestion == question.subquestions.length - 1){ // no more subquestions, but are there more questions?
+                        if (question.questionNum < flow.numQuestions - 1){
+                            flow.currQuestionNum += 1;
+                            flow.getCurrentQuestion().init();
+                            for (var i = 0; i < question.numberLine.numButtonList.length; i++) {
+                                question.numberLine.numButtonList[i].remove();
+                            }
+                            flow.draw();
+                        }
+                        else{ // no more subquestions or questions
+                            ex.alert("You have completed the exercise. Please click Submit.", {color: "blue", stay: true});
+                        }
+                    }
                 } else {
                     // incorrect, decrement score
                     flow.score -= 1/3/(question.subquestions.length+2); // there are 3 problems, with some number of subquestions each
-                }														// plus a bit for good measure and to be nice
+                }                                                       // plus a bit for good measure and to be nice
                 console.log(flow.score);
-	        });
+            });
         };
 
         question.draw = function(){
@@ -470,10 +474,10 @@ var main = function(ex) {
             return function(){subquestion.selectedAnswer = subquestion.shuffledOptions[i]; };
         };
         subquestion.init = function(){
-        	// what number should we add to get to the target range?
-        	// it's different depending on whether x/y are positive/negative
-        	var yToAdd = getYToAdd(subquestion.x, subquestion.y);
-        	// init stuff based on question type
+            // what number should we add to get to the target range?
+            // it's different depending on whether x/y are positive/negative
+            var yToAdd = getYToAdd(subquestion.x, subquestion.y);
+            // init stuff based on question type
             switch (subquestion.type){
                 case ("initial"):
                     subquestion.textLines.push("Let's calculate x%" + subquestion.y.toString());
@@ -550,13 +554,13 @@ var main = function(ex) {
             }
             // write the text target range
             if (subquestion.type != "initial"){
-            	if (subquestion.y > 0){
-            		ex.data.targetRangeText = ex.createParagraph(380,140,"target range",{size:"large"});
-            	}
-            	else{
-            		// TODO: not sure if coords are correct since we can't test it yet
-            		ex.data.targetRangeText = ex.createParagraph(280,140,"target range",{size:"large"});
-            	}
+                if (subquestion.y > 0){
+                    ex.data.targetRangeText = ex.createParagraph(380,140,"target range",{size:"large"});
+                }
+                else{
+                    // TODO: not sure if coords are correct since we can't test it yet
+                    ex.data.targetRangeText = ex.createParagraph(280,140,"target range",{size:"large"});
+                }
             }
         };
 
@@ -572,16 +576,16 @@ var main = function(ex) {
                     if (subquestion.answer === subquestion.selectedAnswer){
                         if (ex.data.par != undefined){
 
-                        	// remove previous text
-                        	subquestion.removeAllFromPar();
-                        	// remove dropdown
-                        	ex.data.possibleAnswersDropDown.remove();
-                        	// remove question num
-                        	ex.data.questionNumText.remove();
-                        	// start drawing target range, x, and y
-                        	flow.getCurrentQuestion().numberLine.setTargetRange(true);
-                        	flow.getCurrentQuestion().numberLine.setShowX(true);
-                        	flow.getCurrentQuestion().numberLine.setShowY(true);
+                            // remove previous text
+                            subquestion.removeAllFromPar();
+                            // remove dropdown
+                            ex.data.possibleAnswersDropDown.remove();
+                            // remove question num
+                            ex.data.questionNumText.remove();
+                            // start drawing target range, x, and y
+                            flow.getCurrentQuestion().numberLine.setTargetRange(true);
+                            flow.getCurrentQuestion().numberLine.setShowX(true);
+                            flow.getCurrentQuestion().numberLine.setShowY(true);
 
                         }
                         return true;
@@ -634,28 +638,28 @@ var main = function(ex) {
 
     // make reset button
     function doReset(){
-    	// undraw things
-    	flow.getCurrentQuestion().getCurrentSubquestion().removeAllFromPar();
-		for (var i = 0; i < flow.getCurrentQuestion().numberLine.numButtonList.length; i++) {
-        	flow.getCurrentQuestion().numberLine.numButtonList[i].remove();
-    	}
-    	ex.data.questionNumText.remove();
+        // undraw things
+        flow.getCurrentQuestion().getCurrentSubquestion().removeAllFromPar();
+        for (var i = 0; i < flow.getCurrentQuestion().numberLine.numButtonList.length; i++) {
+            flow.getCurrentQuestion().numberLine.numButtonList[i].remove();
+        }
+        ex.data.questionNumText.remove();
         if (ex.data.targetRangeText != undefined) ex.data.targetRangeText.remove();
         if (ex.data.possibleAnswersDropDown != undefined) ex.data.possibleAnswersDropDown.remove();
         // make a new thing
-    	flow = Flow();
-    	flow.init();
+        flow = Flow();
+        flow.init();
     }
 
-	ex.chromeElements.resetButton.on("click", function () {doReset(true)});
+    ex.chromeElements.resetButton.on("click", function () {doReset(true)});
 
-	// submit button
-	ex.chromeElements.submitButton.on("click", function() {
-		if (flow.score != undefined) {
-			var feedback = "Your score is " + flow.score.toString();
-			ex.setGrade(flow.score, feedback);
-		}
-	});
+    // submit button
+    ex.chromeElements.submitButton.on("click", function() {
+        if (flow.score != undefined) {
+            var feedback = "Your score is " + flow.score.toString();
+            ex.setGrade(flow.score, feedback);
+        }
+    });
 
     // start!
     flow = Flow();
