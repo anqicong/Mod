@@ -312,7 +312,7 @@ var main = function(ex) {
             ex.graphics.ctx.moveTo(to.x, to.y);
             ex.graphics.ctx.lineTo(to.x-headlen*Math.cos(angle+Math.PI/6),to.y-headlen*Math.sin(angle+Math.PI/6));
             ex.graphics.ctx.stroke();
-
+            ex.graphics.ctx.beginPath();
             //todo
         };
 
