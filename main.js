@@ -467,6 +467,7 @@ var main = function(ex) {
             question.numberLine.jumps = ex.data.instance.state.jumps;
             question.numberLine.showX = ex.data.instance.state.showX;
             question.numberLine.setTargetRange(ex.data.instance.state.showTargetRange);
+            question.numberLine.selectedAnswer = ex.data.instance.state.numberLineAnswer;
 
             // create subquestions
             // initial question
@@ -802,6 +803,7 @@ var main = function(ex) {
                     flow.getCurrentQuestion().numberLine.showX;
 
         ex.data.instance.state.selectedAnswer = flow.getCurrentQuestion().getCurrentSubquestion().selectedAnswer;
+        ex.data.instance.state.numberLineAnswer = flow.getCurrentQuestion().numberLine.selectedAnswer;
 
         ex.data.instance.state.score = flow.score;
     }
