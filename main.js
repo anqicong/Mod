@@ -439,12 +439,12 @@ var main = function(ex) {
                             flow.draw();
                         }
                         else{ // no more subquestions or questions
-                            ex.alert("You have completed the exercise. Please click Submit.", {color: "blue", stay: true});
+                            ex.alert("Congratulations! You have completed the exercise. Please click Submit.", {color: "blue", stay: true});
                         }
                     }
                 } else {
                     // incorrect, decrement score
-                    flow.score -= 1/3/(question.subquestions.length+2); // there are 3 problems, with some number of subquestions each
+                    flow.score -= 1/flow.numQuestions/(question.subquestions.length+2); // there are 3 problems, with some number of subquestions each
                 }                                                       // plus a bit for good measure and to be nice
                 console.log(flow.score);
                 save();
