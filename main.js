@@ -70,7 +70,7 @@ var main = function(ex) {
             for (var j = 0; j < list[i].length; j++) {
                 if (j == list.length - 1) {
                     result += list[i][j].toString();
-                }else {
+                } else {
                     result += list[i][j].toString() + ", ";
                 }
             }
@@ -207,6 +207,7 @@ var main = function(ex) {
         function check(i){ 
             return function(){
                 numberLine.selectedAnswer = i;
+                save();
             } 
         };
 
@@ -495,6 +496,9 @@ var main = function(ex) {
 
             // init current question
             question.getCurrentSubquestion().init();
+            question.getCurrentSubquestion().selectedAnswer = 
+                    ex.data.instance.state.selectedAnswer;
+            question.getCurrentSubquestion().load();
 
             question.nextButton = ex.createButton(ex.width()-75, ex.height()-50, "next", {color:"blue"}).on("click", function(){
                 var correct = question.getCurrentSubquestion().checkAnswer();
@@ -563,7 +567,7 @@ var main = function(ex) {
         ex.data.possibleAnswersDropDown = undefined;
 
         subquestion.makeSelection = function(i){
-            return function(){subquestion.selectedAnswer = subquestion.shuffledOptions[i]; };
+            return function(){subquestion.selectedAnswer = subquestion.shuffledOptions[i]; save();};
         };
         subquestion.init = function(){
             // what number should we add to get to the target range?
@@ -633,14 +637,35 @@ var main = function(ex) {
                     var dropdownY = 360;
                     ex.data.possibleAnswersDropDown = ex.createDropdown(dropdownX, dropdownY,"Choose one",{
                                                                 color: "white",
-                                                                elements: {Yes: function(){subquestion.selectedAnswer = true;},
-                                                                           No: function(){subquestion.selectedAnswer = false;}}
+                                                                elements: {Yes: function(){subquestion.selectedAnswer = true; save();},
+                                                                           No: function(){subquestion.selectedAnswer = false; save();}}
                                                             });
                     break;
                 default:
                     break;
             }
 
+        };
+
+        subquestion.load = function(){
+            switch (subquestion.type){
+                case "initial":
+                    if (subquestion.selectedAnswer !== "") {
+                        ex.data.possibleAnswersDropDown.text(subquestion.selectedAnswer);
+                    };
+                    break;
+                case "reached":
+                    if (subquestion.selectedAnswer !== "") {
+                        if (subquestion.selectedAnswer === true) {
+                            subquestion.possibleAnswersDropDown.text("Yes");
+                        } else {
+                            ex.data.possibleAnswersDropDown.text("No");
+                        };
+                    };
+                    break;
+                default:
+                    break;
+            }
         };
 
         subquestion.draw = function(){
@@ -775,6 +800,8 @@ var main = function(ex) {
                 flow.getCurrentQuestion().numberLine.showTargetRange;
         ex.data.instance.state.showX = 
                     flow.getCurrentQuestion().numberLine.showX;
+
+        ex.data.instance.state.selectedAnswer = flow.getCurrentQuestion().getCurrentSubquestion().selectedAnswer;
 
         ex.data.instance.state.score = flow.score;
     }
