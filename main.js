@@ -1,4 +1,6 @@
 var main = function(ex) {
+    
+    ex.chromeElements.submitButton.disable();
 
     ex.data.meta = {
         "author": "Team 6",
@@ -70,7 +72,7 @@ var main = function(ex) {
             for (var j = 0; j < list[i].length; j++) {
                 if (j == list.length - 1) {
                     result += list[i][j].toString();
-                }else {
+                } else {
                     result += list[i][j].toString() + ", ";
                 }
             }
@@ -147,6 +149,15 @@ var main = function(ex) {
             flow.draw();
         };
 
+        flow.load = function(){
+            for (var i = 0; i < flow.numQuestions; i++){
+                flow.questions.push(Question(i));
+            }
+            flow.score = ex.data.instance.state.score;
+            flow.currQuestionNum = ex.data.instance.state.currQuestionNum;
+            flow.getCurrentQuestion().load();
+        }
+
         flow.draw = function(){
             // draw current question
             flow.getCurrentQuestion().draw();
@@ -198,6 +209,7 @@ var main = function(ex) {
         function check(i){ 
             return function(){
                 numberLine.selectedAnswer = i;
+                save();
             } 
         };
 
@@ -429,7 +441,94 @@ var main = function(ex) {
                             flow.draw();
                         }
                         else{ // no more subquestions or questions
+                            ex.alert("Congratulations! You have completed the exercise. Please click Submit.", {color: "blue", stay: true});
+                            ex.chromeElements.submitButton.enable();
+                            
+                        }
+                    }
+                } else {
+                    // incorrect, decrement score
+                    flow.score -= 1/flow.numQuestions/(question.subquestions.length+2); // there are 3 problems, with some number of subquestions each
+                }                                                       // plus a bit for good measure and to be nice
+                console.log(flow.score);
+                save();
+            });
+        };
+
+        question.load = function(){
+            //load from state
+
+            question.x = ex.data.instance.state.x;
+            question.y = ex.data.instance.state.y;
+            question.currSubquestion = ex.data.instance.state.currSubquestion;
+
+            // create numberline
+            question.numberLine = NumberLine();
+            question.numberLine.setX(question.x);
+            question.numberLine.setY(question.y);
+            question.numberLine.setCurPoint(ex.data.instance.state.curPoint);
+            question.numberLine.setNextPoint(ex.data.instance.state.nextPoint);
+            question.numberLine.jumps = ex.data.instance.state.jumps;
+            question.numberLine.showX = ex.data.instance.state.showX;
+            question.numberLine.setTargetRange(ex.data.instance.state.showTargetRange);
+            question.numberLine.selectedAnswer = ex.data.instance.state.numberLineAnswer;
+
+            // create subquestions
+            // initial question
+            var initialQuestion = SubQuestion("initial");
+            initialQuestion.y = question.y;
+            question.subquestions.push(initialQuestion);
+            // create jump and reached questions
+            var numJumpReachedQuestions = getNumTimesToIterateSubquestion(question.x, question.y);
+            for (var i = 0; i < numJumpReachedQuestions; i++){
+                // jump question
+                var jumpQuestion = SubQuestion("jump");
+                jumpQuestion.x = question.x;
+                jumpQuestion.y = question.y;
+                jumpQuestion.answer = question.x - question.y;
+                question.subquestions.push(jumpQuestion);
+                // reached question
+                var reachedQuestion = SubQuestion("reached");
+                reachedQuestion.x = question.x;
+                reachedQuestion.y = question.y;
+                if (i === numJumpReachedQuestions-1) {
+                    reachedQuestion.answer = true;
+                } else {
+                    reachedQuestion.answer = false;
+                };
+                question.subquestions.push(reachedQuestion);
+            }
+
+            // init current question
+            question.getCurrentSubquestion().init();
+            question.getCurrentSubquestion().selectedAnswer = 
+                    ex.data.instance.state.selectedAnswer;
+            question.getCurrentSubquestion().load();
+
+            question.nextButton = ex.createButton(ex.width()-75, ex.height()-50, "next", {color:"blue"}).on("click", function(){
+                var correct = question.getCurrentSubquestion().checkAnswer();
+                if(correct){
+                    if (question.currSubquestion < question.subquestions.length - 1){ // still have more subquestions to go!
+                        question.currSubquestion += 1;
+                        question.getCurrentSubquestion().init();
+                        for (var i = 0; i < question.numberLine.numButtonList.length; i++) {
+                            question.numberLine.numButtonList[i].remove();
+                        }
+                        ex.graphics.ctx.clearRect(0,0,ex.width(),ex.height());
+                        flow.draw();
+                    }
+                    else if (question.currSubquestion == question.subquestions.length - 1){ // no more subquestions, but are there more questions?
+                        if (question.questionNum < flow.numQuestions - 1){
+                            flow.currQuestionNum += 1;
+                            flow.getCurrentQuestion().init();
+                            for (var i = 0; i < question.numberLine.numButtonList.length; i++) {
+                                question.numberLine.numButtonList[i].remove();
+                            }
+                            flow.draw();
+                        }
+                        else{ // no more subquestions or questions
                             ex.alert("You have completed the exercise. Please click Submit.", {color: "blue", stay: true});
+                            ex.chromeElements.submitButton.enable();
                         }
                     }
                 } else {
@@ -437,8 +536,10 @@ var main = function(ex) {
                     flow.score -= 1/3/(question.subquestions.length+2); // there are 3 problems, with some number of subquestions each
                 }                                                       // plus a bit for good measure and to be nice
                 console.log(flow.score);
+                save();
             });
-        };
+
+        }
 
         question.draw = function(){
             ex.graphics.ctx.clearRect(0,0,ex.width(),ex.height());
@@ -472,7 +573,7 @@ var main = function(ex) {
         ex.data.possibleAnswersDropDown = undefined;
 
         subquestion.makeSelection = function(i){
-            return function(){subquestion.selectedAnswer = subquestion.shuffledOptions[i]; };
+            return function(){subquestion.selectedAnswer = subquestion.shuffledOptions[i]; save();};
         };
         subquestion.init = function(){
             // what number should we add to get to the target range?
@@ -542,14 +643,35 @@ var main = function(ex) {
                     var dropdownY = 360;
                     ex.data.possibleAnswersDropDown = ex.createDropdown(dropdownX, dropdownY,"Choose one",{
                                                                 color: "white",
-                                                                elements: {Yes: function(){subquestion.selectedAnswer = true;},
-                                                                           No: function(){subquestion.selectedAnswer = false;}}
+                                                                elements: {Yes: function(){subquestion.selectedAnswer = true; save();},
+                                                                           No: function(){subquestion.selectedAnswer = false; save();}}
                                                             });
                     break;
                 default:
                     break;
             }
 
+        };
+
+        subquestion.load = function(){
+            switch (subquestion.type){
+                case "initial":
+                    if (subquestion.selectedAnswer !== "") {
+                        ex.data.possibleAnswersDropDown.text(subquestion.selectedAnswer);
+                    };
+                    break;
+                case "reached":
+                    if (subquestion.selectedAnswer !== "") {
+                        if (subquestion.selectedAnswer === true) {
+                            subquestion.possibleAnswersDropDown.text("Yes");
+                        } else {
+                            ex.data.possibleAnswersDropDown.text("No");
+                        };
+                    };
+                    break;
+                default:
+                    break;
+            }
         };
 
         subquestion.draw = function(){
@@ -670,8 +792,43 @@ var main = function(ex) {
         }
     });
 
+    var save = function(){
+        ex.data.instance.state.exists = true;
+        ex.data.instance.state.jumps = flow.getCurrentQuestion().numberLine.jumps;
+        ex.data.instance.state.currSubquestion = flow.getCurrentQuestion().currSubquestion;
+        ex.data.instance.state.currQuestionNum = flow.currQuestionNum;
+        ex.data.instance.state.x = flow.getCurrentQuestion().x;
+        ex.data.instance.state.y = flow.getCurrentQuestion().y;
+        ex.data.instance.state.curPoint = flow.getCurrentQuestion().numberLine.curPoint;
+        ex.data.instance.state.nextPoint = flow.getCurrentQuestion().numberLine.nextPoint;
+    
+        ex.data.instance.state.showTargetRange = 
+                flow.getCurrentQuestion().numberLine.showTargetRange;
+        ex.data.instance.state.showX = 
+                    flow.getCurrentQuestion().numberLine.showX;
+
+        ex.data.instance.state.selectedAnswer = flow.getCurrentQuestion().getCurrentSubquestion().selectedAnswer;
+        ex.data.instance.state.numberLineAnswer = flow.getCurrentQuestion().numberLine.selectedAnswer;
+
+        ex.data.instance.state.score = flow.score;
+    }
+
+    var load = function(){
+        var flow = Flow();
+        flow.load();
+        return flow;
+    }
+
     // start!
-    flow = Flow();
-    flow.init();
+    if(ex.data.instance.state === null || ex.data.instance.state.exists !== true){
+        flow = Flow();
+        flow.init();
+        save();
+    } else {
+        console.log("But why?!");
+        flow = load();
+        console.log(flow);
+        flow.draw();
+    };
 
 };
