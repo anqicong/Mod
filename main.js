@@ -443,7 +443,6 @@ var main = function(ex) {
                         else{ // no more subquestions or questions
                             ex.alert("Congratulations! You have completed the exercise. Please click Submit.", {color: "blue", stay: true});
                             ex.chromeElements.submitButton.enable();
-                            
                         }
                     }
                 } else {
