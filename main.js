@@ -443,6 +443,7 @@ var main = function(ex) {
                         else{ // no more subquestions or questions
                             ex.alert("Congratulations! You have completed the exercise. Please click Submit.", {color: "blue", stay: true});
                             ex.chromeElements.submitButton.enable();
+                            question.nextButton.disable();
                         }
                     }
                 } else {
@@ -792,24 +793,26 @@ var main = function(ex) {
     });
 
     var save = function(){
-        ex.data.instance.state.exists = true;
-        ex.data.instance.state.jumps = flow.getCurrentQuestion().numberLine.jumps;
-        ex.data.instance.state.currSubquestion = flow.getCurrentQuestion().currSubquestion;
-        ex.data.instance.state.currQuestionNum = flow.currQuestionNum;
-        ex.data.instance.state.x = flow.getCurrentQuestion().x;
-        ex.data.instance.state.y = flow.getCurrentQuestion().y;
-        ex.data.instance.state.curPoint = flow.getCurrentQuestion().numberLine.curPoint;
-        ex.data.instance.state.nextPoint = flow.getCurrentQuestion().numberLine.nextPoint;
+        data = {}
+        data.exists = true;
+        data.jumps = flow.getCurrentQuestion().numberLine.jumps;
+        data.currSubquestion = flow.getCurrentQuestion().currSubquestion;
+        data.currQuestionNum = flow.currQuestionNum;
+        data.x = flow.getCurrentQuestion().x;
+        data.y = flow.getCurrentQuestion().y;
+        data.curPoint = flow.getCurrentQuestion().numberLine.curPoint;
+        data.nextPoint = flow.getCurrentQuestion().numberLine.nextPoint;
     
-        ex.data.instance.state.showTargetRange = 
+        data.showTargetRange = 
                 flow.getCurrentQuestion().numberLine.showTargetRange;
-        ex.data.instance.state.showX = 
+        data.showX = 
                     flow.getCurrentQuestion().numberLine.showX;
 
-        ex.data.instance.state.selectedAnswer = flow.getCurrentQuestion().getCurrentSubquestion().selectedAnswer;
-        ex.data.instance.state.numberLineAnswer = flow.getCurrentQuestion().numberLine.selectedAnswer;
+        data.selectedAnswer = flow.getCurrentQuestion().getCurrentSubquestion().selectedAnswer;
+        data.numberLineAnswer = flow.getCurrentQuestion().numberLine.selectedAnswer;
 
-        ex.data.instance.state.score = flow.score;
+        data.score = flow.score;
+        ex.saveState(data);            
     }
 
     var load = function(){
@@ -819,15 +822,17 @@ var main = function(ex) {
     }
 
     // start!
-    if(ex.data.instance.state === null || ex.data.instance.state.exists !== true){
+    if(ex.data.instance.state.exists !== true){
         flow = Flow();
         flow.init();
         save();
+        console.log("new");
     } else {
-        console.log("But why?!");
+        console.log("load?!");
         flow = load();
         console.log(flow);
         flow.draw();
     };
+    ex.unload(save);
 
 };
